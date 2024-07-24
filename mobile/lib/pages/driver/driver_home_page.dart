@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/driver/cars_page.dart';
+import 'package:mobile/pages/driver/messages_page.dart';
+import 'package:mobile/pages/driver/reviews_page.dart';
 import 'package:mobile/pages/driver/rides_page.dart';
 import 'package:mobile/widgets/big_select_button.dart';
 import 'package:mobile/widgets/rating.dart';
@@ -134,7 +137,13 @@ class DriverHomePage extends StatelessWidget {
                 BigSelectButton(
                   text: "Poruke",
                   icon: Icons.mail_outline,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => MessagesPage(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -147,12 +156,21 @@ class DriverHomePage extends StatelessWidget {
                 BigSelectButton(
                   text: "Vozila",
                   icon: Icons.directions_car_outlined,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const CarsPage(),
+                      ),
+                    );
+                  },
                 ),
                 BigSelectButton(
                   text: "Recenzije",
                   icon: Icons.rate_review_outlined,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ReviewsPage()));
+                  },
                 ),
               ],
             ),
