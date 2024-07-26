@@ -24,7 +24,7 @@ class DriverHomePage extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 300,
+                  height: 250,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
