@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/driver/chat_page.dart';
+import 'package:mobile/pages/user/review_page.dart';
 import 'package:mobile/widgets/rating.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class DriverPage extends StatelessWidget {
   const DriverPage({super.key});
@@ -125,41 +128,62 @@ class DriverPage extends StatelessWidget {
                             Text("Po dogovoru"),
                           ],
                         ),
-                        Divider(),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ChatPage(),
+                        ),
+                      );
+                    },
                     label: const Text("Zakaži Vožnju"),
                     icon: const Icon(Icons.directions_car_outlined),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                       backgroundColor:
                           Theme.of(context).colorScheme.tertiaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () => launchUrlString("tel://0603269778"),
                     label: const Text("Pozovi"),
                     icon: const Icon(Icons.phone_outlined),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                       backgroundColor:
                           Theme.of(context).colorScheme.tertiaryContainer,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ReviewPage(),
+                        ),
+                      );
+                    },
                     label: const Text("Ostavi Ocjenu"),
                     icon: const Icon(Icons.star_outline),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                       backgroundColor:
                           Theme.of(context).colorScheme.tertiaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
                   ),
                 ],
