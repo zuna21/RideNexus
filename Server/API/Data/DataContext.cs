@@ -8,4 +8,7 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(builder);
     }
+
+    public DbSet<Driver> Drivers{ get; set; }
 }
+
