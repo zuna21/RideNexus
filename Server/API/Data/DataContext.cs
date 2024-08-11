@@ -1,3 +1,4 @@
+using API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 public class DataContext : DbContext
@@ -9,6 +10,7 @@ public class DataContext : DbContext
         base.OnModelCreating(builder);
     }
 
-    public DbSet<Driver> Drivers{ get; set; }
+    public DbSet<Driver> Drivers { get; set; }
+    public DbSet<Car> Cars { get; set; }
 }
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/driver_model.dart';
+import 'package:mobile/pages/driver/driver_home_page.dart';
 import 'package:mobile/pages/driver/driver_register_page.dart';
+import 'package:mobile/services/driver_service.dart';
 
 class DriverLoginPage extends StatefulWidget {
   const DriverLoginPage({super.key});
@@ -10,7 +13,39 @@ class DriverLoginPage extends StatefulWidget {
 
 class _DriverLoginPageState extends State<DriverLoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _driverService = DriverService();
+
   bool _hidePassword = true;
+  final driverLogin = LoginDriverModel();
+  DriverModel? driver;
+
+  Future<void> onLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+    driverLogin.username = _usernameController.text;
+    driverLogin.password = _passwordController.text;
+
+    try {
+      driver = await _driverService.login(driverLogin);
+      if (driver != null && mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const DriverHomePage(),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +56,9 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const DriverRegisterPage(),),
+              MaterialPageRoute(
+                builder: (_) => const DriverRegisterPage(),
+              ),
             ),
             child: const Text("Kreiraj profil"),
           ),
@@ -55,6 +92,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                     height: 50,
                   ),
                   TextFormField(
+                    controller: _usernameController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Korisničko ime',
@@ -62,7 +100,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Molimo unesite korisničko ime';
                       }
                       return null;
                     },
@@ -71,6 +109,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                     height: 20,
                   ),
                   TextFormField(
+                    controller: _passwordController,
                     obscureText: _hidePassword,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
@@ -90,7 +129,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Molimo unesite lozinku';
                       }
                       return null;
                     },
@@ -112,10 +151,12 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(40),
-                      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-                      foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
-                    onPressed: () {},
+                    onPressed: onLogin,
                     child: const Text("Prijavi se"),
                   ),
                 ],

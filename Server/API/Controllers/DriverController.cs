@@ -28,12 +28,4 @@ public class DriverController(
         return driver;
     }
 
-    [HttpGet("test")]
-    public void Test() 
-    {
-        Console.WriteLine("**********");
-        Console.WriteLine(_config.GetValue<string>("TokenKey"));
-        Console.WriteLine("**********");
-    }
-
 }

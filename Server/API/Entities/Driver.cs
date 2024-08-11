@@ -1,3 +1,5 @@
+using API.Entities;
+
 public class Driver 
 {
     public int Id { get; set; }
@@ -12,4 +14,6 @@ public class Driver
     public double Longitude { get; set; } = 0;
     public string Location { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public List<Car> Cars { get; set; } = [];
 }

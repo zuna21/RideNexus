@@ -1,5 +1,11 @@
 using System.Text;
 using API;
+using API.Repositories;
+using API.Repositories.Contracts;
+using API.Services;
+using API.Services.Contracts;
+using API.Utils;
+using API.Utils.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -37,10 +43,15 @@ builder.Services.AddDbContext<DataContext>(opt =>
     );
 });
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
+builder.Services.AddScoped<ICarRepository, CarRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IDriverAuthService, DriverAuthService>();
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -50,5 +61,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.Run();
