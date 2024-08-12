@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/car_model.dart';
 
 class CarCard extends StatelessWidget {
-  const CarCard({super.key});
+  const CarCard({super.key, required this.car});
+
+  final CarModel car;
 
   @override
   Widget build(BuildContext context) {
@@ -26,25 +29,25 @@ class CarCard extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  "Ford",
+                  car.make!,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color:
                           Theme.of(context).colorScheme.onSecondaryContainer),
                 ),
                 Text(
-                  "Escord 1.6",
+                  car.model!,
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       color: Theme.of(context).colorScheme.onPrimaryContainer),
                 ),
               ],
             ),
-            const Text("345-T-861"),
+            Text(car.registrationNumber!),
             const Icon(
               Icons.directions_car_outlined,
               size: 50,
             ),
             Checkbox(
-              value: true,
+              value: car.isActive!,
               onChanged: (isChecked) {},
             ),
           ],
