@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/car_model.dart';
+import 'package:mobile/pages/driver/create_car_page.dart';
 import 'package:mobile/services/car_service.dart';
 import 'package:mobile/widgets/cards/car_card.dart';
 
@@ -43,7 +44,16 @@ class _CarsPageState extends State<CarsPage> {
         title: const Text("Moja Vozila"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add_circle_outline),),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const CreateCarPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add_circle_outline),
+          ),
         ],
       ),
       body: error != null
