@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatelessWidget {
-  const ConfirmationDialog({super.key});
+  const ConfirmationDialog({super.key, this.question = "Are you sure?"});
+
+  final String question;
 
   @override
   Widget build(BuildContext context) {
@@ -13,17 +15,29 @@ class ConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Are you sure?",
+              question,
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: (){}, child: Text("YES"),),
-                ElevatedButton(onPressed: (){}, child: Text("NO"),),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text("YES"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text("NO"),
+                ),
               ],
             )
           ],

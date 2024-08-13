@@ -52,6 +52,12 @@ class _CarsPageState extends State<CarsPage> {
     });
   }
 
+  void onDeleteCar(int carId) {
+    print(cars.length);
+    cars.removeWhere((car) => car.id! == carId);
+    print(cars.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +79,7 @@ class _CarsPageState extends State<CarsPage> {
               itemCount: cars.length,
               itemBuilder: (itemBuilder, index) => CarCard(
                 car: cars[index],
+                onDelete: onDeleteCar,
               ),
             ),
     );

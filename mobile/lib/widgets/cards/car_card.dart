@@ -3,18 +3,25 @@ import 'package:mobile/models/car_model.dart';
 import 'package:mobile/widgets/dialogs/confirmation_dialog.dart';
 
 class CarCard extends StatelessWidget {
-  const CarCard({super.key, required this.car});
+  const CarCard({super.key, required this.car, required this.onDelete});
 
   final CarModel car;
+  final Function(int carId) onDelete;
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       key: Key(car.id!.toString()),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        showDialog(
-            context: context, builder: (builder) => ConfirmationDialog());
+      onDismissed: (direction) async {
+        final bool answer  = await showDialog(
+          context: context,
+          builder: (builder) => const ConfirmationDialog(),
+        );
+
+        if (answer) {
+          onDelete(car.id!);
+        }
       },
       child: Card(
         color: Theme.of(context).colorScheme.secondaryContainer,
