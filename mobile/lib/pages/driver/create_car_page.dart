@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/car_model.dart';
+import 'package:mobile/services/car_service.dart';
 
 class CreateCarPage extends StatefulWidget {
   const CreateCarPage({super.key});
@@ -12,13 +14,36 @@ class _CreateCarPageState extends State<CreateCarPage> {
   final _make = TextEditingController();
   final _model = TextEditingController();
   final _registrationNumber = TextEditingController();
+  final carService = CarService();
+
+  CreateCarModel car = CreateCarModel();
+  bool _isActive = true;
+  CarModel? createdCar;
 
   @override
   void dispose() {
     _make.dispose();
     _model.dispose();
-    _model.dispose();
+    _registrationNumber.dispose();
     super.dispose();
+  }
+
+  Future<void> create() async {
+    if(!_formKey.currentState!.validate()) return;
+    car.make = _make.text;
+    car.model = _model.text;
+    car.registrationNumber = _registrationNumber.text;
+    car.isActive = _isActive;
+
+    try{
+      createdCar = await carService.create(car);
+    } catch(ex) {
+      print(ex);
+    }
+
+    if (createdCar != null && mounted) {
+      Navigator.of(context).pop(createdCar);
+    }
   }
 
   @override
@@ -92,15 +117,23 @@ class _CreateCarPageState extends State<CreateCarPage> {
                       children: [
                         const Text("Da"),
                         Radio(
-                            value: false,
-                            groupValue: false,
-                            onChanged: (value) {}),
+                            value: true,
+                            groupValue: _isActive,
+                            onChanged: (value) {
+                              setState(() {
+                                _isActive = value!;
+                              });
+                            }),
                         const Spacer(),
                         const Text("Ne"),
                         Radio(
-                            value: true,
-                            groupValue: false,
-                            onChanged: (value) {})
+                            value: false,
+                            groupValue: _isActive,
+                            onChanged: (value) {
+                              setState(() {
+                                _isActive = value!;
+                              });
+                            })
                       ],
                     ),
                   )
@@ -108,7 +141,7 @@ class _CreateCarPageState extends State<CreateCarPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: create,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(40),
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,

@@ -24,6 +24,26 @@ class CarService {
     } else {
       throw Exception("Failed to load cars.");
     }
+  }
 
+  Future<CarModel> create(CreateCarModel createCar) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/cars");
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: "driverToken");
+
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${token!}'
+      },
+      body: json.encode(createCar.toJson())
+    );
+
+    if (response.statusCode == 200) {
+      return CarModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+    } else {
+      throw Exception("Failed to create car");
+    }
   }
 }

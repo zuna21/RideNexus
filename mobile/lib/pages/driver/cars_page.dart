@@ -16,6 +16,8 @@ class _CarsPageState extends State<CarsPage> {
   List<CarModel> cars = [];
   String? error;
 
+  CarModel? createdCar;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +39,19 @@ class _CarsPageState extends State<CarsPage> {
     });
   }
 
+  Future<void> onCreateNewCar() async {
+    createdCar = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const CreateCarPage(),
+      ),
+    );
+
+    if (createdCar == null) return;
+    setState(() {
+      cars = [...cars, createdCar!];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,13 +60,7 @@ class _CarsPageState extends State<CarsPage> {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const CreateCarPage(),
-                ),
-              );
-            },
+            onPressed: onCreateNewCar,
             icon: const Icon(Icons.add_circle_outline),
           ),
         ],

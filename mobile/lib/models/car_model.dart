@@ -34,3 +34,29 @@ class CarModel {
     return data;
   }
 }
+
+class CreateCarModel {
+  String? make;
+  String? model;
+  String? registrationNumber;
+  bool? isActive;
+
+  CreateCarModel(
+      {this.make, this.model, this.registrationNumber, this.isActive});
+
+  CreateCarModel.fromJson(Map<String, dynamic> json) {
+    make = json['make'];
+    model = json['model'];
+    registrationNumber = json['registrationNumber'];
+    isActive = json['isActive'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['make'] = make;
+    data['model'] = model;
+    data['registrationNumber'] = registrationNumber;
+    data['isActive'] = isActive;
+    return data;
+  }
+}
