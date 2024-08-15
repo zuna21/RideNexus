@@ -24,6 +24,16 @@ public class CarService(
         return CarMapper.CarToCarDto(car);
     }
 
+    public async Task<int> Delete(int carId)
+    {
+        var car = await _carRepository.FindById(carId);
+        if (car == null) return -1;
+        _carRepository.Delete(car);
+        if (!await _carRepository.SaveAllAsync()) return -1;
+        return car.Id;
+
+    }
+
     public async Task<List<CarDto>> GetAll(Driver driver)
     {
         return await _carRepository.GetAll(driver.Id);

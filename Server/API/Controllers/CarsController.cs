@@ -35,5 +35,13 @@ namespace API.Controllers
             var cars = await _carService.GetAll(driver);
             return Ok(cars);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<int>> Delete(int id)
+        {
+            var carId = await _carService.Delete(id);
+            if (carId == -1) return BadRequest("Failed to delete car.");
+            return carId;
+        }
     }
 }

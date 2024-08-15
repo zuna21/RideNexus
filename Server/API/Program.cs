@@ -47,11 +47,13 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
-builder.Services.AddScoped<IDriverAuthService, DriverAuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 
 var app = builder.Build();
 

@@ -3,6 +3,7 @@ import 'package:mobile/models/car_model.dart';
 import 'package:mobile/pages/driver/create_car_page.dart';
 import 'package:mobile/services/car_service.dart';
 import 'package:mobile/widgets/cards/car_card.dart';
+import 'package:mobile/widgets/dialogs/confirmation_dialog.dart';
 
 class CarsPage extends StatefulWidget {
   const CarsPage({super.key});
@@ -52,10 +53,25 @@ class _CarsPageState extends State<CarsPage> {
     });
   }
 
-  void onDeleteCar(int carId) {
-    print(cars.length);
-    cars.removeWhere((car) => car.id! == carId);
-    print(cars.length);
+
+  Future<void> _deleteCar(int carId) async {
+    int? deletedCar;
+    String? errorText;
+    try {
+      deletedCar = await carService.delete(carId);
+    } catch(e) {
+      errorText = e.toString();
+    }
+
+    if (deletedCar != null) {
+      setState(() {
+        cars.removeWhere((car) => car.id! == deletedCar!);
+      });
+    } else {
+      setState(() {
+        error = errorText;
+      });
+    }
   }
 
   @override
@@ -77,9 +93,16 @@ class _CarsPageState extends State<CarsPage> {
             )
           : ListView.builder(
               itemCount: cars.length,
-              itemBuilder: (itemBuilder, index) => CarCard(
-                car: cars[index],
-                onDelete: onDeleteCar,
+              itemBuilder: (itemBuilder, index) => Dismissible(
+                key: UniqueKey(),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) => _deleteCar(cars[index].id!),
+                confirmDismiss: (direction) {
+                  return showDialog(context: context, builder: (builder) => const ConfirmationDialog(),);
+                },
+                child: CarCard(
+                  car: cars[index],
+                ),
               ),
             ),
     );

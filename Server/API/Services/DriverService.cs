@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Identity;
 
 public class DriverService(
     IDriverRepository driverRepository,
-    IDriverAuthService driverAuthService
+    IAuthService authService
 ) : IDriverService
 {
     private readonly IDriverRepository _driverRepository = driverRepository;
-    private readonly IDriverAuthService _driverAuthService = driverAuthService;
+    private readonly IAuthService _authService = authService;
 
     public async Task<DriverDto> Login(LoginDriverDto loginDriverDto)
     {
@@ -18,7 +18,7 @@ public class DriverService(
         var result = PasswordManager.VerifyDriverPassword(driver, loginDriverDto.Password);
         if (result == PasswordVerificationResult.Failed) return null;
         var driverDto = DriverMapper.DriverToDriverDto(driver);
-        driverDto.Token = _driverAuthService.GenerateToken(driver);
+        driverDto.Token = _authService.GenerateToken(driver.Username);
         return driverDto;
     }
 

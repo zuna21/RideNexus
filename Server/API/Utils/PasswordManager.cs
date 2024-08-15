@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace API;
 
@@ -20,4 +21,18 @@ public static class PasswordManager
         PasswordHasher<Driver> passwordHasher = new();
         return passwordHasher.VerifyHashedPassword(driver, driver.Password, password);
     }
+
+    public static string HashClientPassword(Client client, string password)
+    {
+        PasswordHasher<Client> passwordHasher = new();
+        return passwordHasher.HashPassword(client, password);
+    }
+
+    public static PasswordVerificationResult VerifyClientPassword(Client client, string password)
+    {
+        PasswordHasher<Client> passwordHasher = new();
+        return passwordHasher.VerifyHashedPassword(client, client.Password, password);
+    }
 }
+
+

@@ -17,6 +17,11 @@ public class CarRepository(
         _dataContext.Cars.Add(car);
     }
 
+    public void Delete(Car car)
+    {
+        _dataContext.Cars.Remove(car);
+    }
+
     public async Task<List<CarDto>> GetAll(int driverId)
     {
         return await _dataContext.Cars
@@ -31,6 +36,11 @@ public class CarRepository(
                 RegistrationNumber = x.RegistrationNumber
             })
             .ToListAsync();
+    }
+
+    public async Task<Car> FindById(int id)
+    {
+        return await _dataContext.Cars.FindAsync(id);
     }
 
     public async Task<bool> SaveAllAsync()

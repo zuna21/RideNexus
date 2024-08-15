@@ -46,4 +46,24 @@ class CarService {
       throw Exception("Failed to create car");
     }
   }
+
+  Future<int> delete(int carId) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/cars/${carId}");
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: "driverToken");
+
+    final response = await http.delete(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${token!}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    } else {
+      throw Exception("Failed to delete car");
+    }
+  }
 }

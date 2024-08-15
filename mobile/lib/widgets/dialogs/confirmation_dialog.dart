@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatelessWidget {
-  const ConfirmationDialog({super.key, this.question = "Are you sure?"});
+  const ConfirmationDialog({super.key, this.question = "Jeste li sigurni?"});
 
   final String question;
 
@@ -30,13 +30,13 @@ class ConfirmationDialog extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
-                  child: const Text("YES"),
+                  child: const Text("Da"),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: const Text("NO"),
+                  child: const Text("Ne"),
                 ),
               ],
             )

@@ -5,13 +5,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API;
 
-public class DriverAuthService(
+public class AuthService(
     IConfiguration configuration
-) : IDriverAuthService
+) : IAuthService
 {
     private readonly IConfiguration _config = configuration;
 
-    public string GenerateToken(Driver driver)
+    public string GenerateToken(string username)
     {
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(
@@ -22,7 +22,7 @@ public class DriverAuthService(
             SecurityAlgorithms.HmacSha256Signature);
 
         var claims = new ClaimsIdentity();
-        claims.AddClaim(new Claim(ClaimTypes.Name, driver.Username));
+        claims.AddClaim(new Claim(ClaimTypes.Name, username));
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

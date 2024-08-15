@@ -12,5 +12,6 @@ public class DataContext : DbContext
 
     public DbSet<Driver> Drivers { get; set; }
     public DbSet<Car> Cars { get; set; }
+    public DbSet<Client> Clients { get; set; }
 }
 
