@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/pages/driver/driver_login_page.dart';
+import 'package:mobile/pages/user/user_login_page.dart';
 
 class SelectionPage extends StatelessWidget {
   const SelectionPage({super.key});
@@ -61,11 +62,14 @@ class SelectionPage extends StatelessWidget {
                         ),
                         Text(
                           "Vozač",
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                              fontSize: 30),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                  fontSize: 30),
                         ),
                       ],
                     ),
@@ -75,6 +79,11 @@ class SelectionPage extends StatelessWidget {
                   height: 10,
                 ),
                 InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const UserLoginPage(),
+                    ),
+                  ),
                   child: Container(
                     width: double.infinity,
                     height: 100,
@@ -102,11 +111,14 @@ class SelectionPage extends StatelessWidget {
                         ),
                         Text(
                           "Korisnik",
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                              fontSize: 30),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                  fontSize: 30),
                         ),
                       ],
                     ),
