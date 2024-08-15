@@ -9,6 +9,11 @@ public class DriverRepository(
 {
     private readonly DataContext _dataContext = dataContext;
 
+    public async Task<Driver> FindById(int id)
+    {
+        return await _dataContext.Drivers.FindAsync(id);
+    }
+
     public async Task<Driver> GetByUsername(string username)
     {
         return await _dataContext.Drivers.FirstOrDefaultAsync(

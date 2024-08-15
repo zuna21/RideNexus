@@ -16,4 +16,5 @@ public class Driver
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Car> Cars { get; set; } = [];
+    public List<Review> Reviews { get; set; } = [];
 }
