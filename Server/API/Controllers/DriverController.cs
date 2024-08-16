@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API;
 
@@ -25,6 +26,23 @@ public class DriverController(
         if (loginDriverDto == null) return BadRequest("Invalid form request.");
         var driver = await _driverService.Login(loginDriverDto);
         if (driver == null) return BadRequest("Something went wrong.");
+        return driver;
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<List<DriverCardDto>>> GetAll()
+    {
+        var drivers = await _driverService.GetAllCards();
+        return Ok(drivers);
+    }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<DriverDetailsDto>> GetDetails(int id)
+    {
+        var driver = await _driverService.GetDetails(id);
+        if (driver == null) return NotFound();
         return driver;
     }
 

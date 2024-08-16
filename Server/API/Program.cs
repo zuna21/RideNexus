@@ -2,6 +2,8 @@ using System.Text;
 using API;
 using API.Repositories;
 using API.Repositories.Contracts;
+using API.Repositories.DtoRepositories;
+using API.Repositories.DtoRepositories.Contracts;
 using API.Services;
 using API.Services.Contracts;
 using API.Utils;
@@ -49,6 +51,7 @@ builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IDriverDtoRepository, DriverDtoRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

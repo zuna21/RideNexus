@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/user/driver_page.dart';
 import 'package:mobile/widgets/rating.dart';
 
 class DriverCard extends StatelessWidget {
-  const DriverCard({super.key});
+  const DriverCard({super.key, required this.driver});
+
+  final DriverCardModel driver;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const DriverPage(),),
+          MaterialPageRoute(
+            builder: (_) => DriverPage(
+              driverId: driver.id!,
+            ),
+          ),
         );
       },
       child: Card(
@@ -53,15 +60,15 @@ class DriverCard extends StatelessWidget {
                   right: 5,
                   child: Row(
                     children: [
-                      const Rating(
-                        rating: 4.5,
+                      Rating(
+                        rating: driver.rating!,
                         size: 20,
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        "(154)",
+                        "(${driver.ratingCount})",
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium!
@@ -87,14 +94,14 @@ class DriverCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    "Adir Žunić",
+                    driver.fullName!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    "Vozilo: Ford Escord 1.6",
+                    driver.car!,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const Text("Cijena: 2 KM/km"),
+                  Text("Cijena: ${driver.price} KM/km"),
                 ],
               ),
             ),

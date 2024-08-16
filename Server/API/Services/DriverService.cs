@@ -1,15 +1,29 @@
 ﻿
 namespace API;
 
+using System.Collections.Generic;
+using API.Repositories.DtoRepositories.Contracts;
 using Microsoft.AspNetCore.Identity;
 
 public class DriverService(
     IDriverRepository driverRepository,
-    IAuthService authService
+    IAuthService authService,
+    IDriverDtoRepository driverDtoRepository
 ) : IDriverService
 {
     private readonly IDriverRepository _driverRepository = driverRepository;
     private readonly IAuthService _authService = authService;
+    private readonly IDriverDtoRepository _driverDtoRepository = driverDtoRepository;
+
+    public async Task<List<DriverCardDto>> GetAllCards()
+    {
+        return await _driverDtoRepository.GetAll();
+    }
+
+    public async Task<DriverDetailsDto> GetDetails(int driverId)
+    {
+        return await _driverDtoRepository.GetDetails(driverId);
+    }
 
     public async Task<DriverDto> Login(LoginDriverDto loginDriverDto)
     {

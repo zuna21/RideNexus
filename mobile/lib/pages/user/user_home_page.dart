@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/selection_page.dart';
 import 'package:mobile/services/client_service.dart';
+import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/cards/driver_card.dart';
 
 class UserHomePage extends StatefulWidget {
@@ -12,6 +14,14 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   final _clientService = ClientService();
+  final _driverService = DriverService();
+  List<DriverCardModel> _drivers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getAll();
+  }
 
   Future<void> onLogout() async {
     await _clientService.logout();
@@ -23,6 +33,19 @@ class _UserHomePageState extends State<UserHomePage> {
         ),
       );
     }
+  }
+
+  Future<void> getAll() async {
+    List<DriverCardModel> drivers = [];
+    try {
+      drivers = await _driverService.getAll();
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      _drivers = [...drivers];
+    });
   }
 
   @override
@@ -38,7 +61,14 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ],
       ),
-      body: const SingleChildScrollView(
+      body: ListView.builder(
+        itemCount: _drivers.length,
+        itemBuilder: (itemBuilder, index) => DriverCard(
+          driver: _drivers[index],
+        ),
+      ),
+
+      /* const SingleChildScrollView(
         child: Column(
           children: [
             DriverCard(),
@@ -46,7 +76,7 @@ class _UserHomePageState extends State<UserHomePage> {
             DriverCard(),
           ],
         ),
-      ),
+      ), */
     );
   }
 }

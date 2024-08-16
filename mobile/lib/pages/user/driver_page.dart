@@ -1,20 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/chat_page.dart';
 import 'package:mobile/pages/user/review_page.dart';
+import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/rating.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class DriverPage extends StatelessWidget {
-  const DriverPage({super.key});
+class DriverPage extends StatefulWidget {
+  const DriverPage({super.key, required this.driverId});
+
+  final int driverId;
+
+  @override
+  State<DriverPage> createState() => _DriverPageState();
+}
+
+class _DriverPageState extends State<DriverPage> {
+  final _driverService = DriverService();
+  DriverDetailsModel? _driver;
+
+  @override
+  void initState() {
+    super.initState();
+    getDetails();
+  }
+
+
+  Future<void> getDetails() async {
+    DriverDetailsModel? driver;
+    try {
+      driver = await _driverService.getDetails(widget.driverId);
+    } catch(e) {
+      print(e);
+    }
+
+    setState(() {
+      _driver = driver;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vozac"),
+        title: _driver != null 
+          ? Text(_driver!.username!)
+          : const Text("Vozač"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: SingleChildScrollView(
+      body: _driver != null
+      ? SingleChildScrollView(
         child: Column(
           children: [
             Stack(
@@ -57,19 +93,19 @@ class DriverPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text("(154)"),
+                      Text("(${_driver!.ratingCount!})"),
                       const SizedBox(
                         width: 10,
                       ),
-                      const Rating(
-                        rating: 4.6,
+                      Rating(
+                        rating: _driver!.rating!,
                         size: 30,
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        "4.6",
+                        _driver!.rating!.toString(),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ],
@@ -78,7 +114,7 @@ class DriverPage extends StatelessWidget {
                     height: 50,
                   ),
                   Text(
-                    "Adir Žunić",
+                    _driver!.fullName!,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(
@@ -94,38 +130,38 @@ class DriverPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         color:
                             Theme.of(context).colorScheme.secondaryContainer),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Trenutna lokacija:"),
                             Text("Doboj"),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Vozilo:"),
-                            Text("Ford Escord 1.6"),
+                            const Text("Vozilo:"),
+                            Text(_driver!.car!),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Reg. oznaka:"),
-                            Text("543-T-123"),
+                            const Text("Reg. oznaka:"),
+                            Text(_driver!.registrationNumber!),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Cijena:"),
-                            Text("Po dogovoru"),
+                            const Text("Cijena:"),
+                            Text(_driver!.price.toString()),
                           ],
                         ),
                       ],
@@ -155,7 +191,7 @@ class DriverPage extends StatelessWidget {
                     height: 10,
                   ),
                   ElevatedButton.icon(
-                    onPressed: () => launchUrlString("tel://0603269778"),
+                    onPressed: () => launchUrlString("tel://${_driver!.phone!}"),
                     label: const Text("Pozovi"),
                     icon: const Icon(Icons.phone_outlined),
                     style: ElevatedButton.styleFrom(
@@ -191,6 +227,9 @@ class DriverPage extends StatelessWidget {
             ),
           ],
         ),
+      )
+      : const Center(
+        child: Text("Wait to get driver..."),
       ),
     );
   }
