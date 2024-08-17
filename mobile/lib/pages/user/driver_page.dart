@@ -100,6 +100,7 @@ class _DriverPageState extends State<DriverPage> {
                       Rating(
                         rating: _driver!.rating!,
                         size: 30,
+                        canChange: false,
                       ),
                       const SizedBox(
                         width: 10,
@@ -209,7 +210,9 @@ class _DriverPageState extends State<DriverPage> {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => const ReviewPage(),
+                          builder: (_) => ReviewPage(
+                            id: widget.driverId,
+                          ),
                         ),
                       );
                     },

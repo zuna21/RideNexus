@@ -10,4 +10,5 @@ public class Client
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Review> Reviews { get; set; } = [];
+    public List<Chat> Chats { get; set; } = [];
 }

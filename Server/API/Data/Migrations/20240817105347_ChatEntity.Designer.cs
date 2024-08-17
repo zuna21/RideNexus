@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240817105347_ChatEntity")]
+    partial class ChatEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,12 +74,6 @@ namespace API.Data.Migrations
                     b.Property<int>("DriverId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsSeenDriver")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsSeenUser")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
@@ -106,36 +103,6 @@ namespace API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("API.Entities.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CreatorType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("API.Entities.Review", b =>
@@ -249,17 +216,6 @@ namespace API.Data.Migrations
                     b.Navigation("Driver");
                 });
 
-            modelBuilder.Entity("API.Entities.Message", b =>
-                {
-                    b.HasOne("API.Entities.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-                });
-
             modelBuilder.Entity("API.Entities.Review", b =>
                 {
                     b.HasOne("API.Entities.Client", "Client")
@@ -277,11 +233,6 @@ namespace API.Data.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("Driver");
-                });
-
-            modelBuilder.Entity("API.Entities.Chat", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("API.Entities.Client", b =>

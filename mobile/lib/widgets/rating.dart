@@ -5,12 +5,14 @@ class Rating extends StatefulWidget {
   final double rating;
   final bool canChange;
   final double size;
+  final Function(double)? onChange;
 
   const Rating({
     super.key, 
     required this.rating, 
     this.size = 48,
     this.canChange = true,
+    this.onChange
     });
 
   @override
@@ -46,6 +48,10 @@ class _RatingState extends State<Rating> {
         if (!widget.canChange) return;
         setState(() {
           currentRating = value;
+          if (widget.onChange != null) {
+            // print(currentRating);
+            widget.onChange!(currentRating);
+          }
         });
       },
     );

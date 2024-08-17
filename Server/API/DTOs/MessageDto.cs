@@ -1,0 +1,11 @@
+using System;
+
+namespace API.DTOs;
+
+public class MessageDto
+{
+    public int Id { get; set; }
+    public string Content { get; set; }
+    public bool IsMine { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

@@ -52,6 +52,9 @@ builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IDriverDtoRepository, DriverDtoRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IChatDtoRepository, ChatDtoRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -59,6 +62,7 @@ builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
 

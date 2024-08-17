@@ -17,4 +17,5 @@ public class Driver
 
     public List<Car> Cars { get; set; } = [];
     public List<Review> Reviews { get; set; } = [];
+    public List<Chat> Chats { get; set; } = [];
 }
