@@ -31,6 +31,9 @@ class Message extends StatelessWidget {
                 message.content!,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

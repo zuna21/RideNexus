@@ -12,7 +12,9 @@ class ChatCard extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => const ChatPage(),
+          builder: (_) => ChatPage(
+            chatId: chat.id!,
+          ),
         ),
       ),
       child: Card(

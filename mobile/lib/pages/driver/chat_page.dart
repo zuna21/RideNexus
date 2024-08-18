@@ -25,9 +25,11 @@ class _ChatPageState extends State<ChatPage> {
     getChat();
   }
 
-  void getChat() {
+  Future<void> getChat() async {
     if (widget.driverId != null) {
       getClientChatByIds();
+    } else if (widget.chatId != null) {
+      getChatByid();
     }
   }
 
@@ -45,6 +47,19 @@ class _ChatPageState extends State<ChatPage> {
         _chat = chat;
       });
     }
+  }
+
+  Future<void> getChatByid() async {
+    ChatModel? chat;
+    try {
+      chat = await _chatService.getChatById(widget.chatId!);
+    } catch(e) {
+      print(e);
+    }
+
+    setState(() {
+      _chat = chat;
+    });
   }
 
   Future<void> sendMessage() async {

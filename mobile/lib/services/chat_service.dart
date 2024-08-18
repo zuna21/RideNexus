@@ -30,7 +30,10 @@ class ChatService {
 
   Future<MessageModel> sendMessage(int chatId, CreateMessageModel createMessageModel) async {
     // u zavisnosti od role samo url promijeni
-    final url = Uri.http(AppConfig.baseUrl, "/api/chats/send-client/$chatId");
+    final role = await _userService.getRole();
+    final url = role == "client"
+      ? Uri.http(AppConfig.baseUrl, "/api/chats/send-client/$chatId")
+      : Uri.http(AppConfig.baseUrl, "/api/chats/send-driver/$chatId");
     final token = await _userService.getToken();
 
     final response = await http.post(
@@ -65,6 +68,26 @@ class ChatService {
       return (json.decode(response.body) as List<dynamic>).map((e) => ChatCardModel.fromJson(e)).toList();
     } else {
       throw Exception("Failed to get chats");
+    }
+  }
+
+  Future<ChatModel> getChatById(int chatId) async {
+    // u zavisnosti od role promjenimo url;
+    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chat/$chatId");
+    final token = await _userService.getToken();
+
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return ChatModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Failed to get chat.");
     }
   }
 }

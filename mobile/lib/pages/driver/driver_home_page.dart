@@ -163,7 +163,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => MessagesPage(),
+                          builder: (_) => const MessagesPage(),
                         ),
                       );
                     },

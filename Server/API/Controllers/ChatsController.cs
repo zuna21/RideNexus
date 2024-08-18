@@ -28,6 +28,14 @@ namespace API.Controllers
             return message;
         }
 
+        [HttpPost("send-driver/{chatId}")]
+        public async Task<ActionResult<MessageDto>> SendDriver(int chatId, CreateMessageDto createMessageDto)
+        {
+            var message = await _chatService.SendMessageDriver(chatId, createMessageDto);
+            if (message == null) return BadRequest("Failed to send message");
+            return message;
+        }
+
         [HttpGet("driver-chats")]
         public async Task<ActionResult<List<ChatCardDto>>> GetDriverChats()
         {

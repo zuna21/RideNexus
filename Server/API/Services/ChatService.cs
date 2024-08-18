@@ -93,4 +93,32 @@ public class ChatService(
             CreatedAt = message.CreatedAt,
         };
     }
+
+    public async Task<MessageDto> SendMessageDriver(int chatId, CreateMessageDto createMessageDto)
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return null;
+        var chat  = await _chatRepository.GetById(chatId);
+        if (chat == null) return null;
+
+        Message message= new()
+        {
+            Content = createMessageDto.Content,
+            ChatId = chat.Id,
+            Chat = chat,
+            CreatorId = driver.Id,
+            CreatorType = CreatorType.Driver
+        };
+
+        _messageRepository.Create(message);
+        if (!await _messageRepository.SaveAllAsync()) return null;
+
+        return new MessageDto
+        {
+            Id = message.Id,
+            Content = message.Content,
+            IsMine = true,
+            CreatedAt = message.CreatedAt,
+        };
+    }
 }
