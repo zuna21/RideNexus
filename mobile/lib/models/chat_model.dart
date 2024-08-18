@@ -26,3 +26,34 @@ class ChatModel {
   }
 }
 
+
+
+class ChatCardModel {
+  int? id;
+  String? senderUsername;
+  bool? isSeen;
+  MessageModel? lastMessage;
+
+  ChatCardModel({this.id, this.senderUsername, this.isSeen, this.lastMessage});
+
+  ChatCardModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    senderUsername = json['senderUsername'];
+    isSeen = json['isSeen'];
+    lastMessage = json['lastMessage'] != null
+        ? MessageModel.fromJson(json['lastMessage'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['senderUsername'] = senderUsername;
+    data['isSeen'] = isSeen;
+    if (lastMessage != null) {
+      data['lastMessage'] = lastMessage!.toJson();
+    }
+    return data;
+  }
+}
+

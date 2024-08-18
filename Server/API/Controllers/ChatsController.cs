@@ -27,5 +27,22 @@ namespace API.Controllers
             if (message == null) return BadRequest("Failed to send message.");
             return message;
         }
+
+        [HttpGet("driver-chats")]
+        public async Task<ActionResult<List<ChatCardDto>>> GetDriverChats()
+        {
+            var chats = await _chatService.GetDriverChats();
+            if (chats == null) return BadRequest("Failed to get chats");
+
+            return Ok(chats);
+        }
+
+        [HttpGet("driver-chat/{chatId}")]
+        public async Task<ActionResult<ChatDto>> GetDriverChat(int chatId)
+        {
+            var chat = await _chatService.GetDriverChat(chatId);
+            if (chat == null) return BadRequest("Failed to get chat.");
+            return chat;
+        }
     }
 }

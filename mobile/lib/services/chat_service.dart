@@ -48,4 +48,23 @@ class ChatService {
       throw Exception("Failed to send message");
     }
   }
+
+  Future<List<ChatCardModel>> getDriverChats() async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chats");
+    final token = await _userService.getToken();
+
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List<dynamic>).map((e) => ChatCardModel.fromJson(e)).toList();
+    } else {
+      throw Exception("Failed to get chats");
+    }
+  }
 }

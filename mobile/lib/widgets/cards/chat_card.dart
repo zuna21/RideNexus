@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/chat_model.dart';
 import 'package:mobile/pages/driver/chat_page.dart';
 
 class ChatCard extends StatelessWidget {
-  final bool
-      isSeen; // ovo ce se izbrisati jer ce input biti chat koji ce imati isSeen
+  const ChatCard({super.key, required this.chat});
 
-  const ChatCard({super.key, this.isSeen = false});
+  final ChatCardModel chat;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (_) => ChatPage(),
+          builder: (_) => const ChatPage(),
         ),
       ),
       child: Card(
-        color: isSeen
+        color: chat.isSeen!
             ? Theme.of(context).colorScheme.secondaryContainer
             : Theme.of(context).colorScheme.tertiaryContainer,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              const Column(
+              Column(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     backgroundImage: NetworkImage("https://picsum.photos/700"),
                   ),
-                  Text("zuna21")
+                  Text(chat.senderUsername!)
                 ],
               ),
               const SizedBox(
@@ -38,7 +38,7 @@ class ChatCard extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      "Mozesl li danas oko polak ajkdfj kjakfj kasdjfk jkda jkldajf kjdakfj kfjkajfkjakj fkajfd k 1 dociadfasdfasdfdasfadfadfadsf do grada?",
+                      chat.lastMessage!.content!,
                       style: Theme.of(context).textTheme.bodyMedium,
                       overflow: TextOverflow.visible,
                     ),
@@ -49,7 +49,7 @@ class ChatCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "24-07-2024 11:25",
+                          chat.lastMessage!.createdAt!,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
