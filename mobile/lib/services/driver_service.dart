@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/app_config.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +20,7 @@ class DriverService {
     if (response.statusCode == 200) {
       DriverModel driver = DriverModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
       await _userService.setToken(driver.token!);
+      await _userService.setRole("driver");
       return driver;
     }
     else {
@@ -30,13 +29,11 @@ class DriverService {
   }
 
   Future<void> logout() async {
-    const storage = FlutterSecureStorage();
-    await storage.deleteAll();
+    await _userService.deleteAll();
   }
 
   Future<List<DriverCardModel>> getAll() async {
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "clientToken");
+    final token = await _userService.getToken();
     final url = Uri.http(AppConfig.baseUrl, "/api/driver");
     final response = await http.get(
       url,
@@ -54,8 +51,7 @@ class DriverService {
   }
 
   Future<DriverDetailsModel> getDetails(int driverId) async {
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "clientToken");
+    final token = await _userService.getToken();
     final url = Uri.http(AppConfig.baseUrl, "/api/driver/$driverId");
     final response = await http.get(
       url,

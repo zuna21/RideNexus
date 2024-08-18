@@ -1,14 +1,15 @@
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/app_config.dart';
 import 'package:mobile/models/review_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/user_service.dart';
 
 class ReviewService {
+  final _userService = UserService();
+
   Future<ReviewModel> create(CreateReviewModel createReviewModel, int driverId) async {
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "clientToken");
+    final token = await _userService.getToken();
     final url = Uri.http(AppConfig.baseUrl, "/api/reviews/$driverId");
     final response = await http.post(
       url,

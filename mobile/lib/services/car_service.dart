@@ -1,21 +1,22 @@
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/app_config.dart';
 import 'package:mobile/models/car_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/user_service.dart';
 
 class CarService {
+  final _userService = UserService();
+
   Future<List<CarModel>> getAll() async {
     final url = Uri.http(AppConfig.baseUrl, "/api/cars");
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "driverToken");
+    final token = await _userService.getToken();
 
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${token!}'
+        'Authorization': 'Bearer $token'
       },
     );
 
@@ -28,14 +29,13 @@ class CarService {
 
   Future<CarModel> create(CreateCarModel createCar) async {
     final url = Uri.http(AppConfig.baseUrl, "/api/cars");
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "driverToken");
+    final token = await _userService.getToken();
 
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${token!}'
+        'Authorization': 'Bearer $token'
       },
       body: json.encode(createCar.toJson())
     );
@@ -48,9 +48,8 @@ class CarService {
   }
 
   Future<int> delete(int carId) async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/cars/${carId}");
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: "driverToken");
+    final url = Uri.http(AppConfig.baseUrl, "/api/cars/$carId");
+    final token = await _userService.getToken();
 
     final response = await http.delete(
       url,

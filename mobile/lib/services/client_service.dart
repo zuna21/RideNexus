@@ -1,13 +1,14 @@
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/app_config.dart';
 import 'package:mobile/models/client_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/user_service.dart';
 
 class ClientService {
+  final _userService = UserService();
+
   Future<ClientModel> login(LoginClientModel loginClientModel) async {
-    const storage = FlutterSecureStorage();
     final url = Uri.http(AppConfig.baseUrl, "/api/client/login");
     final response = await http.post(
       url,
@@ -18,9 +19,10 @@ class ClientService {
     );
 
     if (response.statusCode == 200) {
-      ClientModel driver = ClientModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
-      await storage.write(key: "clientToken", value: driver.token!);
-      return driver;
+      ClientModel client = ClientModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      await _userService.setToken(client.token!);
+      await _userService.setRole("client");
+      return client;
     }
     else {
       throw Exception("Failed to login");
@@ -28,7 +30,6 @@ class ClientService {
   }
 
   Future<void> logout() async {
-    const storage = FlutterSecureStorage();
-    await storage.deleteAll();
+    await _userService.deleteAll();
   }
 }

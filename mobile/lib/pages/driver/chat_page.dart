@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/chat_model.dart';
+import 'package:mobile/models/message_model.dart';
 import 'package:mobile/services/chat_service.dart';
 import 'package:mobile/widgets/message.dart';
 
@@ -14,9 +15,9 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final chatService = ChatService();
+  final _chatService = ChatService();
+  final _messageController = TextEditingController();
   ChatModel? _chat;
-  
 
   @override
   void initState() {
@@ -34,8 +35,8 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> getClientChatByIds() async {
     ChatModel? chat;
     try {
-      chat = await chatService.getClientChatByIds(widget.driverId!);
-    } catch(e) {
+      chat = await _chatService.getClientChatByIds(widget.driverId!);
+    } catch (e) {
       print(e.toString());
     }
 
@@ -46,6 +47,35 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future<void> sendMessage() async {
+    if (_chat == null || _messageController.text.isEmpty 
+    || _messageController.text.trim() == "") return;
+    
+    final createMessageModel = CreateMessageModel();
+    createMessageModel.content = _messageController.text;
+
+    MessageModel? createdMessage;
+
+    try {
+      createdMessage = await _chatService.sendMessage(_chat!.id!, createMessageModel);
+    } catch(e) {
+      print(e);
+    }
+
+    if (createdMessage != null) {
+      _messageController.clear();
+      setState(() {
+        _chat!.messages = [..._chat!.messages!, createdMessage!];
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,72 +83,71 @@ class _ChatPageState extends State<ChatPage> {
         title: const Text("Poruke"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: Column(
-        children: [
-          const Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Message(
-                    isMine: false,
-                  ),
-                  Message(
-                    isMine: true,
-                  ),
-                  Message(
-                    isMine: false,
-                  ),
-                  Message(
-                    isMine: true,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
+      body: _chat != null
+          ? Column(
               children: [
-                Row(
-                  children: [
-                    const Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Napiši poruku',
-                        ),
-                      ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _chat!.messages!.length,
+                    itemBuilder: (itemBuilder, index) => Message(
+                      message: _chat!.messages![index],
                     ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.send_outlined),
-                      style: IconButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-                        foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
-                  child: const Text("Zakaži Vožnju"),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _messageController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Napiši poruku',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          IconButton(
+                            onPressed: sendMessage,
+                            icon: const Icon(Icons.send_outlined),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .tertiaryContainer,
+                              foregroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onTertiaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                        child: const Text("Zakaži Vožnju"),
+                      ),
+                    ],
+                  ),
+                )
               ],
+            )
+          : const Center(
+              child: Text("Failed to get chat"),
             ),
-          )
-        ],
-      ),
     );
   }
 }

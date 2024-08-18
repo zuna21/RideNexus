@@ -26,4 +26,8 @@ class UserService {
     _role = role;
     await _secureStorage.write(key: "role", value: _role);
   }
+
+  Future<void> deleteAll() async {
+    await _secureStorage.deleteAll();
+  }
 }
