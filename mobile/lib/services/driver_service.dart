@@ -4,10 +4,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile/app_config.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/user_service.dart';
 
 class DriverService {
+  final _userService = UserService();
+
   Future<DriverModel> login(LoginDriverModel loginDriverModel) async {
-    const storage = FlutterSecureStorage();
     final url = Uri.http(AppConfig.baseUrl, "/api/driver/login");
     final response = await http.post(
       url,
@@ -19,7 +21,7 @@ class DriverService {
 
     if (response.statusCode == 200) {
       DriverModel driver = DriverModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
-      await storage.write(key: "driverToken", value: driver.token!);
+      await _userService.setToken(driver.token!);
       return driver;
     }
     else {

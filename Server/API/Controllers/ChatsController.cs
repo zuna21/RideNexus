@@ -19,5 +19,13 @@ namespace API.Controllers
             if (chat == null) return BadRequest("Failed to get chat");
             return chat;
         }
+
+        [HttpPost("send-client/{chatId}")]
+        public async Task<ActionResult<MessageDto>> SendClient(int chatId, CreateMessageDto createMessageDto)
+        {
+            var message = await _chatService.SendMessageClient(chatId, createMessageDto);
+            if (message == null) return BadRequest("Failed to send message.");
+            return message;
+        }
     }
 }

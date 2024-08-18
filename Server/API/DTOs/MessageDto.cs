@@ -9,3 +9,9 @@ public class MessageDto
     public bool IsMine { get; set; }
     public DateTime CreatedAt { get; set; }
 }
+
+
+public class CreateMessageDto
+{
+    public string Content { get; set; }
+}

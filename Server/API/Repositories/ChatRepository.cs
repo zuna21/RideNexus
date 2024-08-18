@@ -16,6 +16,11 @@ public class ChatRepository(
         _dataContext.Chats.Add(chat);
     }
 
+    public async Task<Chat> GetById(int id)
+    {
+        return await _dataContext.Chats.FindAsync(id);
+    }
+
     public async Task<bool> IsChatCreated(int clientId, int driverId)
     {
         return await _dataContext.Chats

@@ -175,7 +175,9 @@ class _DriverPageState extends State<DriverPage> {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => const ChatPage(),
+                          builder: (_) => ChatPage(
+                            driverId: widget.driverId,
+                          ),
                         ),
                       );
                     },

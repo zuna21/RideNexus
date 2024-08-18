@@ -7,5 +7,6 @@ public interface IChatRepository
 {
     void Create(Chat chat);
     Task<bool> IsChatCreated(int clientId, int driverId);
+    Task<Chat> GetById(int id);
     Task<bool> SaveAllAsync();
 }
