@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/cars_page.dart';
+import 'package:mobile/pages/driver/driver_login_page.dart';
 import 'package:mobile/pages/driver/messages_page.dart';
 import 'package:mobile/pages/driver/reviews_page.dart';
 import 'package:mobile/pages/driver/rides_page.dart';
@@ -18,12 +20,25 @@ class DriverHomePage extends StatefulWidget {
 
 class _DriverHomePageState extends State<DriverHomePage> {
   final _driverService = DriverService();
+  final _locationService = LocationService();
   DriverAccountDetailsModel? _driver;
 
   @override
   void initState() {
     super.initState();
     getAccountDetails();
+    // getLocationPermission();
+  }
+
+  Future<void> getLocationPermission() async {
+    final havePermission = await _locationService.havePermissionForLocation();
+    if (!havePermission && mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const DriverLoginPage(),
+        ),
+      );
+    }
   }
 
   Future<void> getAccountDetails() async {
