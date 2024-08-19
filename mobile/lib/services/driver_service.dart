@@ -67,4 +67,22 @@ class DriverService {
       throw Exception("Failed to get driver");
     }
   }
+
+  Future<DriverAccountDetailsModel> GetAccountDetails() async {
+    final token = await _userService.getToken();
+    final url = Uri.http(AppConfig.baseUrl, "/api/driver/account-details");
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return DriverAccountDetailsModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Failed to get account details");
+    }
+  }
 }

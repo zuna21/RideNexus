@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/review_model.dart';
+import 'package:mobile/services/review_service.dart';
 import 'package:mobile/widgets/cards/review_card.dart';
 import 'package:mobile/widgets/rating.dart';
 
-class ReviewsPage extends StatelessWidget {
-  const ReviewsPage({super.key});
+class ReviewsPage extends StatefulWidget {
+  const ReviewsPage({super.key, required this.driverId});
+
+  final int driverId;
+
+  @override
+  State<ReviewsPage> createState() => _ReviewsPageState();
+}
+
+class _ReviewsPageState extends State<ReviewsPage> {
+  final _reviewService = ReviewService();
+  ReviewDetailsModel? _review;
+
+  @override
+  void initState() {
+    super.initState();
+    getReviewDetails();
+  }
+
+  Future<void> getReviewDetails() async {
+    ReviewDetailsModel? review;
+    try {
+      review = await _reviewService.getReviewDetails(widget.driverId);
+      print(review);
+    } catch (e) {
+      print(e);
+    }
+
+    if (review != null) {
+      setState(() {
+        _review = review;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,29 +46,45 @@ class ReviewsPage extends StatelessWidget {
         title: const Text("Recenzije"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Rating(rating: 4),
-                Text("4.0",
-                style: Theme.of(context).textTheme.titleLarge,),
-              ],
+      body: _review != null
+          ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Rating(
+                        rating: _review!.rating!,
+                        canChange: false,
+                      ),
+                      Text(
+                        _review!.rating!.toString(),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text("(${_review!.ratingCount!})"),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _review!.reviews!.length,
+                      itemBuilder: (itemBuilder, index) => ReviewCard(
+                        review: _review!.reviews![index],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          )
+          : const Center(
+              child: Text("You don't have any review"),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text("(48)"),
-            const SizedBox(
-              height: 20,
-            ),
-            const ReviewCard(),
-          ],
-        ),
-      ),
     );
   }
 }

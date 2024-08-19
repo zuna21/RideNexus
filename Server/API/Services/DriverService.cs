@@ -3,17 +3,27 @@ namespace API;
 
 using System.Collections.Generic;
 using API.Repositories.DtoRepositories.Contracts;
+using API.Utils.Contracts;
 using Microsoft.AspNetCore.Identity;
 
 public class DriverService(
     IDriverRepository driverRepository,
     IAuthService authService,
-    IDriverDtoRepository driverDtoRepository
+    IDriverDtoRepository driverDtoRepository,
+    IUserService userService
 ) : IDriverService
 {
     private readonly IDriverRepository _driverRepository = driverRepository;
     private readonly IAuthService _authService = authService;
     private readonly IDriverDtoRepository _driverDtoRepository = driverDtoRepository;
+    private readonly IUserService _userService = userService;
+
+    public async Task<DriverAccountDetailsDto> GetAccountDetails()
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return null;
+        return await _driverDtoRepository.GetAccountDetails(driver.Id);
+    }
 
     public async Task<List<DriverCardDto>> GetAllCards()
     {

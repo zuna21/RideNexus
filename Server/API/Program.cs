@@ -55,6 +55,7 @@ builder.Services.AddScoped<IDriverDtoRepository, DriverDtoRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IChatDtoRepository, ChatDtoRepository>();
+builder.Services.AddScoped<IReviewDtoRepository, ReviewDtoRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

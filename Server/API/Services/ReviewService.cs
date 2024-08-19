@@ -2,6 +2,7 @@ using System;
 using API.DTOs;
 using API.Entities;
 using API.Repositories.Contracts;
+using API.Repositories.DtoRepositories.Contracts;
 using API.Services.Contracts;
 using API.Utils.Contracts;
 using API.Utils.Mappers;
@@ -12,12 +13,15 @@ namespace API.Services;
 public class ReviewService(
     IReviewRepository reviewRepository,
     IUserService userService,
-    IDriverRepository driverRepository
+    IDriverRepository driverRepository,
+    IReviewDtoRepository reviewDtoRepository
 ) : IReviewService
 {
     private readonly IReviewRepository _reviewRepository = reviewRepository;
     private readonly IDriverRepository _driverRepository = driverRepository;
     private readonly IUserService _userService = userService;
+    private readonly IReviewDtoRepository _reviewDtoRepository = reviewDtoRepository;
+
 
     public async Task<ReviewDto> Create(CreateReviewDto createReviewDto, int driverId)
     {
@@ -37,5 +41,10 @@ public class ReviewService(
         _reviewRepository.Add(review);
         if (!await _reviewRepository.SaveAllAsync()) return null;
         return ReviewMapper.ReviewToReviewDto(review);
+    }
+
+    public async Task<ReviewDetailsDto> GetReviewDetails(int driverId)
+    {
+        return await _reviewDtoRepository.GetReviewDetails(driverId);
     }
 }

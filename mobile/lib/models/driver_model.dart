@@ -126,3 +126,45 @@ class DriverDetailsModel {
     return data;
   }
 }
+
+
+class DriverAccountDetailsModel {
+  int? id;
+  String? username;
+  String? fullName;
+  double? price;
+  double? rating;
+  int? ratingCount;
+  int? unseenChats;
+
+  DriverAccountDetailsModel(
+      {this.id,
+      this.username,
+      this.fullName,
+      this.price,
+      this.rating,
+      this.ratingCount,
+      this.unseenChats});
+
+  DriverAccountDetailsModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    username = json['username'];
+    fullName = json['fullName'];
+    price = double.parse(json['price'].toString());
+    rating = double.parse(json['rating'].toString());
+    ratingCount = json['ratingCount'];
+    unseenChats = json['unseenChats'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['username'] = username;
+    data['fullName'] = fullName;
+    data['price'] = price;
+    data['rating'] = rating;
+    data['ratingCount'] = ratingCount;
+    data['unseenChats'] = unseenChats;
+    return data;
+  }
+}

@@ -22,4 +22,12 @@ public class ReviewsController(
         if (createdReview == null) return BadRequest("Failed to create review");
         return createdReview;
     }
+
+    [HttpGet("{driverId}")]
+    public async Task<ActionResult<ReviewDetailsDto>> GetReviewDetails(int driverId)
+    {
+        var review = await _reviewService.GetReviewDetails(driverId);
+        if (review == null) return NotFound();
+        return review;
+    }
 }

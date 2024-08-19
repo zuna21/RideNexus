@@ -26,4 +26,22 @@ class ReviewService {
       throw Exception("Failed to create review");
     }
   }
+
+  Future<ReviewDetailsModel> getReviewDetails(int driverId) async {
+    final token = await _userService.getToken();
+    final url = Uri.http(AppConfig.baseUrl, "/api/reviews/$driverId");
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return ReviewDetailsModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Failed to get review details");
+    }
+  }
 }

@@ -46,4 +46,13 @@ public class DriverController(
         return driver;
     }
 
+    [HttpGet("account-details")]
+    [Authorize]
+    public async Task<ActionResult<DriverAccountDetailsDto>> GetAccountDetails()
+    {
+        var driver = await _driverService.GetAccountDetails();
+        if (driver == null) return NotFound();
+        return driver;
+    }
+
 }

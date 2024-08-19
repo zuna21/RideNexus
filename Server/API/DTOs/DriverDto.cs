@@ -46,3 +46,14 @@ public class DriverDetailsDto
     public string Phone { get; set; }
     
 }
+
+public class DriverAccountDetailsDto
+{
+    public int Id { get; set; }
+    public string Username { get; set; }
+    public string FullName { get; set; }
+    public double Price { get; set; }
+    public double Rating { get; set; }
+    public int RatingCount { get; set; }
+    public int UnseenChats { get; set; }
+}

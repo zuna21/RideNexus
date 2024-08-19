@@ -6,4 +6,5 @@ namespace API.Services.Contracts;
 public interface IReviewService
 {
     Task<ReviewDto> Create(CreateReviewDto createReviewDto, int driverId);
+    Task<ReviewDetailsDto> GetReviewDetails(int driverId);
 }

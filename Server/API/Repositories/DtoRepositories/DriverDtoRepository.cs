@@ -10,6 +10,27 @@ public class DriverDtoRepository(
 {
     private readonly DataContext _dataContext = dataContext;
 
+    public async Task<DriverAccountDetailsDto> GetAccountDetails(int driverId)
+    {
+        return await _dataContext.Drivers
+            .Where(driver => driver.Id == driverId)
+            .Select(driver => new DriverAccountDetailsDto
+            {
+                Id = driver.Id,
+                FullName = $"{driver.LastName} {driver.FirstName}",
+                Username = driver.Username,
+                Price = driver.Price,
+                UnseenChats = driver.Chats
+                    .Where(chat => chat.IsSeenDriver == false)
+                    .Count(),
+                Rating = driver.Reviews.Count == 0 
+                    ? 5
+                    : driver.Reviews.Average(review => review.Rating),
+                RatingCount = driver.Reviews.Count
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<DriverCardDto>> GetAll()
     {
         return await _dataContext.Drivers
