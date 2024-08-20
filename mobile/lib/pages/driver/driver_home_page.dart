@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
+import 'package:mobile/models/location_model.dart';
 import 'package:mobile/pages/driver/cars_page.dart';
 import 'package:mobile/pages/driver/driver_login_page.dart';
 import 'package:mobile/pages/driver/messages_page.dart';
@@ -22,22 +23,43 @@ class _DriverHomePageState extends State<DriverHomePage> {
   final _driverService = DriverService();
   final _locationService = LocationService();
   DriverAccountDetailsModel? _driver;
+  LocationModel? _location;
 
   @override
   void initState() {
     super.initState();
     getAccountDetails();
-    // getLocationPermission();
+    getLocationPermission();
   }
 
   Future<void> getLocationPermission() async {
     final havePermission = await _locationService.havePermissionForLocation();
-    if (!havePermission && mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const DriverLoginPage(),
-        ),
-      );
+    if (!havePermission) {
+      await _driverService.logout();
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const DriverLoginPage(),
+          ),
+        );
+      }
+    } else {
+      getAndUpdateLocation();
+    }
+  }
+
+  Future<void> getAndUpdateLocation() async {
+    LocationModel? location;
+    try {
+      location = await _locationService.getAndUpdateCurrentLocation();
+    } catch (e) {
+      print(e);
+    }
+
+    if (location != null) {
+      setState(() {
+        _location = location;
+      });
     }
   }
 
@@ -132,9 +154,11 @@ class _DriverHomePageState extends State<DriverHomePage> {
                           ),
                           Row(
                             children: [
-                              const Chip(
-                                label: Text("Doboj"),
-                                avatar: Icon(Icons.location_on),
+                              Chip(
+                                label: Text(_location == null
+                                    ? "Nema lokacije"
+                                    : _location!.location!),
+                                avatar: const Icon(Icons.location_on),
                               ),
                               const SizedBox(
                                 width: 10,
