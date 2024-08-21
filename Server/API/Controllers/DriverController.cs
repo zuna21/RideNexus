@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API;
@@ -53,6 +54,15 @@ public class DriverController(
         var driver = await _driverService.GetAccountDetails();
         if (driver == null) return NotFound();
         return driver;
+    }
+
+    [HttpPut("update-fcm-token")]
+    [Authorize]
+    public async Task<ActionResult<bool>> UpdateFcmToken(FCMDto fCMDto)
+    {
+        var isUpdated = await _driverService.UpdateFCMToken(fCMDto);
+        if (isUpdated == false) return BadRequest("Failed to update fmc token.");
+        return true;
     }
 
 }

@@ -2,6 +2,7 @@
 namespace API;
 
 using System.Collections.Generic;
+using API.DTOs;
 using API.Repositories.DtoRepositories.Contracts;
 using API.Utils.Contracts;
 using Microsoft.AspNetCore.Identity;
@@ -60,5 +61,15 @@ public class DriverService(
             return null;
         }
         return DriverMapper.DriverToDriverDto(driver);
+    }
+
+    public async Task<bool> UpdateFCMToken(FCMDto fCMDto)
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return false;
+
+        driver.FCMToken = fCMDto.Token;
+        await _driverRepository.SaveAllAsync();
+        return true;
     }
 }

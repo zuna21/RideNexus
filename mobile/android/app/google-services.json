@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683668035125",
+    "project_id": "ride-nexus",
+    "storage_bucket": "ride-nexus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683668035125:android:5c8d4b16fa34f8d0c3037c",
+        "android_client_info": {
+          "package_name": "com.ridenexus.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYHKhuivYlqF8s7R_vN7gn8gw-ytFFBjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

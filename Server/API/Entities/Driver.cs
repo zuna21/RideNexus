@@ -13,6 +13,7 @@ public class Driver
     public double Latitude { get; set; } = 0;
     public double Longitude { get; set; } = 0;
     public string Location { get; set; }
+    public string FCMToken { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Car> Cars { get; set; } = [];

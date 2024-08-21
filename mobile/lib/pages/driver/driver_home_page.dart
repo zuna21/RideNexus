@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/firebase_messaging_service.dart';
 import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/models/location_model.dart';
@@ -22,6 +23,7 @@ class DriverHomePage extends StatefulWidget {
 class _DriverHomePageState extends State<DriverHomePage> {
   final _driverService = DriverService();
   final _locationService = LocationService();
+  final _firebaseMessagingService = FirebaseMessagingService();
   DriverAccountDetailsModel? _driver;
   LocationModel? _location;
 
@@ -30,9 +32,10 @@ class _DriverHomePageState extends State<DriverHomePage> {
     super.initState();
     getAccountDetails();
     getLocationPermission();
+    _firebaseMessagingService.updateFirebaseMessageToken();
   }
 
-  Future<void> getLocationPermission() async {
+  void getLocationPermission() async {
     final havePermission = await _locationService.havePermissionForLocation();
     if (!havePermission) {
       await _driverService.logout();
@@ -48,7 +51,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     }
   }
 
-  Future<void> getAndUpdateLocation() async {
+  void getAndUpdateLocation() async {
     LocationModel? location;
     try {
       location = await _locationService.getAndUpdateCurrentLocation();
@@ -63,7 +66,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     }
   }
 
-  Future<void> getAccountDetails() async {
+  void getAccountDetails() async {
     DriverAccountDetailsModel? driver;
     try {
       driver = await _driverService.GetAccountDetails();
@@ -78,7 +81,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     }
   }
 
-  Future<void> onLogout() async {
+  void onLogout() async {
     await _driverService.logout();
     if (mounted) {
       Navigator.of(context).push(
