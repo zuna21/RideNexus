@@ -8,6 +8,8 @@ using API.Services;
 using API.Services.Contracts;
 using API.Utils;
 using API.Utils.Contracts;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -65,6 +67,11 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ride-nexus-firebase-adminsdk-zhqe1-ffdf951ae5.json")),
+});
 
 var app = builder.Build();
 

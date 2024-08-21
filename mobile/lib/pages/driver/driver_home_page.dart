@@ -32,7 +32,9 @@ class _DriverHomePageState extends State<DriverHomePage> {
     super.initState();
     getAccountDetails();
     getLocationPermission();
+    _firebaseMessagingService.grandPermissions();
     _firebaseMessagingService.updateFirebaseMessageToken();
+    _firebaseMessagingService.receiveMessage();
   }
 
   void getLocationPermission() async {
