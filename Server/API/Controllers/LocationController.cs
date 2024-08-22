@@ -19,5 +19,13 @@ namespace API.Controllers
             if (location == null) return BadRequest("Failed to update location.");
             return location;
         }
+
+        [HttpPut("client")]
+        public async Task<ActionResult<LocationDto>> UpdateClient(LocationDto locationDto)
+        {
+            var location = await _locationService.UpdateClientLocation(locationDto);
+            if (location == null) return BadRequest("Failed to update location.");
+            return location;
+        }
     }
 }

@@ -16,5 +16,6 @@ public class DataContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Ride> Rides { get; set; }
 }
 

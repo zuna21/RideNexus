@@ -6,4 +6,5 @@ namespace API.Services.Contracts;
 public interface ILocationService
 {
     Task<LocationDto> UpdateDriverLocation(LocationDto location);
+    Task<LocationDto> UpdateClientLocation(LocationDto location);
 }

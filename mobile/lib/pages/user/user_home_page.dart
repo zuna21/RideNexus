@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/selection_page.dart';
+import 'package:mobile/pages/user/user_login_page.dart';
 import 'package:mobile/services/client_service.dart';
 import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/cards/driver_card.dart';
@@ -15,15 +17,31 @@ class UserHomePage extends StatefulWidget {
 class _UserHomePageState extends State<UserHomePage> {
   final _clientService = ClientService();
   final _driverService = DriverService();
+  final _locationService = LocationService();
   List<DriverCardModel> _drivers = [];
 
   @override
   void initState() {
     super.initState();
+    getLocationPermission();
     getAll();
   }
 
-  Future<void> onLogout() async {
+  void getLocationPermission() async {
+    final havePermissions = await _locationService.havePermissionForLocation();
+    if (!havePermissions) {
+      await _clientService.logout();
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const UserLoginPage(),
+          ),
+        );
+      }
+    }
+  }
+
+  void onLogout() async {
     await _clientService.logout();
 
     if (mounted) {

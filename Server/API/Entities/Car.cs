@@ -13,4 +13,5 @@ public class Car
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Driver Driver { get; set; }
+    public List<Ride> Rides { get; set; }
 }

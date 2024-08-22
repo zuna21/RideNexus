@@ -98,7 +98,7 @@ class _CarsPageState extends State<CarsPage> {
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) => _deleteCar(cars[index].id!),
                 confirmDismiss: (direction) {
-                  return showDialog(context: context, builder: (builder) => const ConfirmationDialog(),);
+                  return showDialog(context: context, builder: (_) => const ConfirmationDialog(),);
                 },
                 child: CarCard(
                   car: cars[index],

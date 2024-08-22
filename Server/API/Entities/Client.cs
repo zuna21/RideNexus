@@ -15,4 +15,5 @@ public class Client
 
     public List<Review> Reviews { get; set; } = [];
     public List<Chat> Chats { get; set; } = [];
+    public List<Ride> Rides { get; set; } = [];
 }

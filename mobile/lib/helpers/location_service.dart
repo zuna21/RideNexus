@@ -27,7 +27,11 @@ class LocationService {
 
     // sacuvati u bazi
     final token = await _userService.getToken();
-    final url = Uri.http(AppConfig.baseUrl, "/api/location/driver");
+    final role = await _userService.getRole();
+    Uri? url;
+    role == "driver"
+    ? url = Uri.http(AppConfig.baseUrl, "/api/location/driver")
+    : url = Uri.http(AppConfig.baseUrl, "/api/location/client");
     final response = await http.put(
       url,
       headers: <String, String>{

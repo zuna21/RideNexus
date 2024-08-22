@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/models/chat_model.dart';
 import 'package:mobile/models/message_model.dart';
 import 'package:mobile/services/chat_service.dart';
+import 'package:mobile/widgets/dialogs/ride_dialog.dart';
 import 'package:mobile/widgets/message.dart';
 
 class ChatPage extends StatefulWidget {
@@ -85,6 +86,10 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  void scheduleARide() async {
+    showDialog(context: context, builder: (_) => RideDialog(),);
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -145,7 +150,7 @@ class _ChatPageState extends State<ChatPage> {
                         height: 5,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: scheduleARide,
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                           backgroundColor:
