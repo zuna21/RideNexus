@@ -47,4 +47,14 @@ public class CarRepository(
     {
         return await _dataContext.SaveChangesAsync() > 0;
     }
+
+    public async Task<Car> GetDriverActiveCar(int driverId)
+    {
+        return await _dataContext.Drivers
+            .Where(driver => driver.Id == driverId)
+            .Select(driver => driver.Cars
+                .FirstOrDefault(car => car.IsActive)
+            )
+            .FirstOrDefaultAsync();
+    }
 }

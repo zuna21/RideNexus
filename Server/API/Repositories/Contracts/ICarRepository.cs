@@ -10,5 +10,6 @@ public interface ICarRepository
     void Delete(Car car);
     Task<Car> FindById(int id);
     Task<List<CarDto>> GetAll(int driverId);
+    Task<Car> GetDriverActiveCar(int driverId);
     Task<bool> SaveAllAsync();
 }

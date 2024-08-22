@@ -67,6 +67,8 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IRideService, RideService>();
+
 
 FirebaseApp.Create(new AppOptions()
 {
