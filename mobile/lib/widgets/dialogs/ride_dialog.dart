@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/location_model.dart';
 import 'package:mobile/models/ride_model.dart';
+import 'package:mobile/services/ride_service.dart';
 
 class RideDialog extends StatefulWidget {
-  const RideDialog({super.key});
+  const RideDialog({super.key, required this.driverId});
+
+  final int driverId;
 
   @override
   State<RideDialog> createState() => _RideDialogState();
@@ -14,6 +17,7 @@ class _RideDialogState extends State<RideDialog> {
   final _locationService = LocationService();
   LocationModel? _location;
   final createRideModel = CreateRideModel();
+  final _rideService = RideService();
   final _passengersController = TextEditingController(
     text: "1"
   );
@@ -39,13 +43,23 @@ class _RideDialogState extends State<RideDialog> {
     }
   }
 
-  void _schedule() {
-    if (_location == null || _passengersController.text.isEmpty || _passengersController.text.trim() == "") return;
-    print(_passengersController.text);
-    createRideModel.startLatitude = _location!.latitude!;
-    createRideModel.startLongitude = _location!.longitude!;
-    createRideModel.origin = _location!.location!;
+  void _schedule() async {
+    if (
+      _location == null 
+      || _passengersController.text.isEmpty 
+      || _passengersController.text.trim() == ""
+    ) return;
     createRideModel.passengers = int.tryParse(_passengersController.text) ?? 1;
+    createRideModel.driverId = widget.driverId;
+    try {
+      await _rideService.create(createRideModel);
+    } catch(e) {
+      print(e);
+    }
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override

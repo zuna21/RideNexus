@@ -4,6 +4,7 @@ using API.Entities;
 using API.Repositories.Contracts;
 using API.Services.Contracts;
 using API.Utils.Contracts;
+using FirebaseAdmin.Messaging;
 
 namespace API.Services;
 
@@ -17,11 +18,11 @@ public class RideService(
     private readonly IDriverRepository _driverRepository = driverRepository;
     private readonly ICarRepository _carRepository = carRepository;
 
-    public async Task<bool> Create(int driverId, CreateRideDto createRideDto)
+    public async Task<bool> Create(CreateRideDto createRideDto)
     {
         var client = await _userService.GetClient();
-        if (client == null) return false; // Ovo ce vjerovatno vracati null, kasnije malo
-        var driver = await _driverRepository.FindById(driverId);
+        if (client == null) return false;
+        var driver = await _driverRepository.FindById(createRideDto.DriverId);
         if (driver == null) return false;
         var car = await _carRepository.GetDriverActiveCar(driver.Id);
         if (car == null) return false;
@@ -34,14 +35,28 @@ public class RideService(
             Client = client,
             CarId = car.Id,
             Car = car,
-            StartLatitude = createRideDto.StartLatitude,
-            StartLongitude = createRideDto.StartLongitude,
-            Origin = createRideDto.Origin,
+            StartLatitude = client.Latitude,
+            StartLongitude = client.Longitude,
+            Origin = client.Location,
             Passengers = createRideDto.Passengers,
             RideStatus = RideStatus.Active
         };
 
-        Console.WriteLine(ride);
+        FirebaseAdmin.Messaging.Message message = new()
+        {
+            Notification = new FirebaseAdmin.Messaging.Notification
+            {
+                Title = "Imate novu vožnju 🚗",
+                Body = $"Korisnik {client.Username} trazi vožnju za {ride.Passengers} osoba. Iz mjesta {ride.Origin}."
+            },
+            Token = driver.FCMToken
+        };
+
+        var messaging = FirebaseMessaging.DefaultInstance;
+        var result = await messaging.SendAsync(message);
+
+        if (string.IsNullOrEmpty(result)) return false;
+
         return true;
 
     }

@@ -34,7 +34,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
     getLocationPermission();
     _firebaseMessagingService.grandPermissions();
     _firebaseMessagingService.updateFirebaseMessageToken();
-    _firebaseMessagingService.receiveMessage();
+    _firebaseMessagingService.receiveMessage(context);
   }
 
   void getLocationPermission() async {

@@ -87,7 +87,13 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void scheduleARide() async {
-    showDialog(context: context, builder: (_) => RideDialog(),);
+    if (widget.driverId == null) {
+      print("Nemas id od drivera");
+      return;
+    }
+    showDialog(context: context, builder: (_) => RideDialog(
+      driverId: widget.driverId!,
+    ),);
   }
 
   @override

@@ -5,5 +5,5 @@ namespace API.Services.Contracts;
 
 public interface IRideService
 {
-    Task<bool> Create(int driverId, CreateRideDto createRideDto);
+    Task<bool> Create(CreateRideDto createRideDto);
 }

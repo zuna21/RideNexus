@@ -1,19 +1,21 @@
 using API.DTOs;
 using API.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class RidesController(
         IRideService rideService
     ) : BaseController
     {
         private readonly IRideService _rideService = rideService;
 
-        [HttpPost("{driverId}")]
-        public async Task<ActionResult<bool>> Create(int driverId, CreateRideDto createRideDto)
+        [HttpPost]
+        public async Task<ActionResult<bool>> Create(CreateRideDto createRideDto)
         {
-            var ride = await _rideService.Create(driverId, createRideDto);
+            var ride = await _rideService.Create(createRideDto);
             return Ok(ride);
         }
     }
