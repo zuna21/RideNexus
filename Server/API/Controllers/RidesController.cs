@@ -18,5 +18,21 @@ namespace API.Controllers
             var ride = await _rideService.Create(createRideDto);
             return Ok(ride);
         }
+
+        [HttpGet("active-rides")]
+        public async Task<ActionResult<List<ActiveRideCardDto>>> GetActiveRides()
+        {
+            var rides = await _rideService.GetActiveRides();
+            if (rides == null) return BadRequest("Something went wrong.");
+            return Ok(rides);
+        }
+
+        [HttpGet("decline/{rideId}")]
+        public async Task<ActionResult<int>> Decline(int rideId)
+        {
+            var declinedRide = await _rideService.Decline(rideId);
+            if (declinedRide == -1) return BadRequest("Failed to decline.");
+            return declinedRide;
+        }
     }
 }

@@ -1,126 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/helpers/location_service.dart';
-import 'package:mobile/models/location_model.dart';
-import 'package:mobile/models/ride_model.dart';
-import 'package:mobile/services/ride_service.dart';
+import 'package:mobile/pages/driver/driver_home_page.dart';
+import 'package:mobile/pages/driver/rides_page.dart';
 
-class RideDialog extends StatefulWidget {
-  const RideDialog({super.key, required this.driverId});
+class RideDialog extends StatelessWidget {
+  const RideDialog({super.key, this.title = "Naslov", this.body = "Body"});
 
-  final int driverId;
-
-  @override
-  State<RideDialog> createState() => _RideDialogState();
-}
-
-class _RideDialogState extends State<RideDialog> {
-  final _locationService = LocationService();
-  LocationModel? _location;
-  final createRideModel = CreateRideModel();
-  final _rideService = RideService();
-  final _passengersController = TextEditingController(
-    text: "1"
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    getAndUpdateLocation();
-  }
-
-  void getAndUpdateLocation() async {
-    LocationModel? location;
-    try {
-      location = await _locationService.getAndUpdateCurrentLocation();
-    } catch(e) {
-      print(e);
-    }
-
-    if (location != null) {
-      setState(() {
-        _location = location;
-      });
-    }
-  }
-
-  void _schedule() async {
-    if (
-      _location == null 
-      || _passengersController.text.isEmpty 
-      || _passengersController.text.trim() == ""
-    ) return;
-    createRideModel.passengers = int.tryParse(_passengersController.text) ?? 1;
-    createRideModel.driverId = widget.driverId;
-    try {
-      await _rideService.create(createRideModel);
-    } catch(e) {
-      print(e);
-    }
-
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
-  }
-
-  @override
-  void dispose() {
-    _passengersController.dispose();
-    super.dispose();
-  }
+  final String title;
+  final String body;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.all(20),
+      insetPadding: EdgeInsets.all(8.0),
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("Broj osoba:"),
-                SizedBox(
-                  width: 100,
-                  height: 50,
-                  child: TextFormField(
-                    controller: _passengersController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Broj',
-                    ),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
-                )
-              ],
             ),
             const SizedBox(
-              height: 15,
+              height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("Vaša Lokacija: "),
-                Chip(
-                  label: Text(_location == null 
-                  ? "...sačekajte"
-                  : _location!.location!),
-                  avatar: const Icon(Icons.location_on_outlined),
-                ),
-              ],
+            Text(
+              body,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
             ),
             const SizedBox(
               height: 15,
             ),
             ElevatedButton(
-              onPressed: _schedule,
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(40),
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.tertiaryContainer,
+                foregroundColor:
+                    Theme.of(context).colorScheme.onTertiaryContainer,
+                minimumSize: Size.fromHeight(40),
               ),
-              child: const Text("Zakaži"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => DriverHomePage(),
+                  ),
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => RidesPage(),
+                  ),
+                );
+              },
+              child: Text("Pogledajte"),
             ),
           ],
         ),

@@ -7,7 +7,7 @@ import 'package:mobile/app_config.dart';
 import 'package:mobile/models/fcm_model.dart';
 import 'package:mobile/user_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:mobile/widgets/dialogs/accept_ride_dialog.dart';
+import 'package:mobile/widgets/dialogs/ride_dialog.dart';
 
 class FirebaseMessagingService {
   final _userService = UserService();
@@ -30,15 +30,16 @@ class FirebaseMessagingService {
 
   void receiveMessage(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
+      
       print('Message data: ${message.data}');
-      showDialog(
-        context: context,
-        builder: (_) => AcceptRideDialog(
-          title: message.notification!.title!,
-          body: message.notification!.body!,
-        ),
-      );
+      print(message.data['NotificationType']);
+      print(message.notification!.title);
+      print(message.notification!.body!);
+      // Ovo cemo ako je NotificationType == "Ride"
+      showDialog(context: context, builder: (_) => RideDialog(
+        title: message.notification!.title!,
+        body: message.notification!.body!,
+      ),);
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
       }

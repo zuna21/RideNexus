@@ -58,6 +58,8 @@ builder.Services.AddScoped<IChatRepository, ChatRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IChatDtoRepository, ChatDtoRepository>();
 builder.Services.AddScoped<IReviewDtoRepository, ReviewDtoRepository>();
+builder.Services.AddScoped<IRideRepository, RideRepository>();
+builder.Services.AddScoped<IRideDtoRepository, RideDtoRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

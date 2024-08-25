@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/models/chat_model.dart';
 import 'package:mobile/models/message_model.dart';
 import 'package:mobile/services/chat_service.dart';
-import 'package:mobile/widgets/dialogs/ride_dialog.dart';
+import 'package:mobile/widgets/dialogs/create_ride_dialog.dart';
 import 'package:mobile/widgets/message.dart';
 
 class ChatPage extends StatefulWidget {
@@ -54,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
     ChatModel? chat;
     try {
       chat = await _chatService.getChatById(widget.chatId!);
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
 
@@ -64,17 +64,19 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> sendMessage() async {
-    if (_chat == null || _messageController.text.isEmpty 
-    || _messageController.text.trim() == "") return;
-    
+    if (_chat == null ||
+        _messageController.text.isEmpty ||
+        _messageController.text.trim() == "") return;
+
     final createMessageModel = CreateMessageModel();
     createMessageModel.content = _messageController.text;
 
     MessageModel? createdMessage;
 
     try {
-      createdMessage = await _chatService.sendMessage(_chat!.id!, createMessageModel);
-    } catch(e) {
+      createdMessage =
+          await _chatService.sendMessage(_chat!.id!, createMessageModel);
+    } catch (e) {
       print(e);
     }
 
@@ -91,9 +93,31 @@ class _ChatPageState extends State<ChatPage> {
       print("Nemas id od drivera");
       return;
     }
-    showDialog(context: context, builder: (_) => RideDialog(
-      driverId: widget.driverId!,
-    ),);
+    final isRideCreated = await showDialog(
+      context: context,
+      builder: (_) => CreateRideDialog(
+        driverId: widget.driverId!,
+      ),
+    );
+
+    if (mounted) {
+      if (isRideCreated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.greenAccent,
+            content: Text(
+                "Obavijestit ćemo vas ubrzo da li je vaša vožnja prihvaćena."),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                "Nažalost vožnja nije kreirana."),
+          ),
+        );
+      }
+    }
   }
 
   @override
