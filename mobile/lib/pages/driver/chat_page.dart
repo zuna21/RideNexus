@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/models/chat_model.dart';
 import 'package:mobile/models/message_model.dart';
 import 'package:mobile/services/chat_service.dart';
+import 'package:mobile/user_service.dart';
 import 'package:mobile/widgets/dialogs/create_ride_dialog.dart';
 import 'package:mobile/widgets/message.dart';
 
@@ -18,11 +19,14 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final _chatService = ChatService();
   final _messageController = TextEditingController();
+  final _userService = UserService();
   ChatModel? _chat;
+  bool asDriver = false;
 
   @override
   void initState() {
     super.initState();
+    _doesDriverOpenPage();
     getChat();
   }
 
@@ -32,6 +36,13 @@ class _ChatPageState extends State<ChatPage> {
     } else if (widget.chatId != null) {
       getChatByid();
     }
+  }
+
+  void _doesDriverOpenPage() async {
+    final role = await _userService.getRole();
+    setState(() {
+      asDriver = role == "driver";
+    });
   }
 
   // Ova funkcija je ako se proslijedi driverId (tj. ako user otvori chat kroz vozaca)
@@ -112,8 +123,7 @@ class _ChatPageState extends State<ChatPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-                "Nažalost vožnja nije kreirana."),
+            content: Text("Nažalost vožnja nije kreirana."),
           ),
         );
       }
@@ -179,17 +189,19 @@ class _ChatPageState extends State<ChatPage> {
                       const SizedBox(
                         height: 5,
                       ),
-                      ElevatedButton(
-                        onPressed: scheduleARide,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(50),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                      if (!asDriver)
+                        ElevatedButton(
+                          onPressed: scheduleARide,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            foregroundColor: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
+                          child: const Text("Zakaži Vožnju"),
                         ),
-                        child: const Text("Zakaži Vožnju"),
-                      ),
                     ],
                   ),
                 )

@@ -22,6 +22,11 @@ public class ClientRepository(
             .FirstOrDefaultAsync(x => string.Equals(x.Username, username.ToLower()));
     }
 
+    public async Task<Client> GetById(int clientId)
+    {
+        return await _dataContext.Clients.FindAsync(clientId);
+    }
+
     public async Task<bool> SaveAllAsync()
     {
         return await _dataContext.SaveChangesAsync() > 0;

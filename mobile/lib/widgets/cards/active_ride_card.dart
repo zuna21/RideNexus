@@ -183,7 +183,7 @@ class _ActiveRideCardState extends State<ActiveRideCard> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => const FinishRidePage(),
+                    builder: (_) => FinishRidePage(rideId: widget.ride.id!),
                   ),
                 );
               },

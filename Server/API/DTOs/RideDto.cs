@@ -24,3 +24,8 @@ public class ActiveRideCardDto
     public int Passengers { get; set; }
     public DateTime CreatedAt { get; set; }
 }
+
+public class FinishRideDto
+{
+    public double Price { get; set; }
+}

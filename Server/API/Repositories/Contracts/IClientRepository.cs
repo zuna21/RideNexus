@@ -7,5 +7,6 @@ public interface IClientRepository
 {
     void Create(Client client);
     Task<Client> FindByUsername(string username);
+    Task<Client> GetById(int clientId);
     Task<bool> SaveAllAsync();
 }

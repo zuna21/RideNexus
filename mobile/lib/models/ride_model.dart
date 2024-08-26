@@ -61,3 +61,20 @@ class ActiveRideCardModel {
     return data;
   }
 }
+
+class FinishRideModel {
+  double? price;
+
+  FinishRideModel({this.price});
+
+  FinishRideModel.fromJson(Map<String, dynamic> json) {
+    price = double.tryParse(json['price'].toString());
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['price'] = price;
+    return data;
+  }
+}
+

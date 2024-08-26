@@ -34,5 +34,13 @@ namespace API.Controllers
             if (declinedRide == -1) return BadRequest("Failed to decline.");
             return declinedRide;
         }
+
+        [HttpPut("finish/{rideId}")]
+        public async Task<ActionResult<bool>> Finish(int rideId, FinishRideDto finishRideDto)
+        {
+            var isRideFinished = await _rideService.Finish(rideId, finishRideDto);
+            if (!isRideFinished) return BadRequest("Something went wrong.");
+            return true;
+        }
     }
 }

@@ -22,19 +22,23 @@ class _RidesPageState extends State<RidesPage> {
   }
 
   void _declineRide(int rideId) async {
-    final areYouSure = await showDialog<bool>(context: context, builder: (_) => ConfirmationDialog(
-      question: "Jeste li sigurni da zelite odbiti?",
-    ),);
+    final areYouSure = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmationDialog(
+        question: "Jeste li sigurni da zelite odbiti?",
+      ),
+    );
 
     if (areYouSure == null || !areYouSure) return;
 
     try {
       final declinedRideId = await _rideService.decline(rideId);
-      final declinedRide = _activeRides.firstWhere((ride) => ride.id! == declinedRideId);
+      final declinedRide =
+          _activeRides.firstWhere((ride) => ride.id! == declinedRideId);
       setState(() {
         _activeRides.remove(declinedRide);
       });
-    } catch(e) {
+    } catch (e) {
       print(e.toString());
     }
   }
@@ -59,31 +63,28 @@ class _RidesPageState extends State<RidesPage> {
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {},
-                label: const Text("24.7.2024"),
-                icon: const Icon(Icons.calendar_today_outlined),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.tertiaryContainer,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onTertiaryContainer),
-              ),
-            ],
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            "Vaša trenutno aktivna vožnja:",
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(
             height: 20,
           ),
           Flexible(
-            child: ListView.builder(
-              itemCount: _activeRides.length,
-              itemBuilder: (itemBuilder, index) => ActiveRideCard(
-                ride: _activeRides[index],
-                decline: _declineRide,
-              ),
-            ),
+            child: _activeRides.isNotEmpty
+                ? ListView.builder(
+                    itemCount: _activeRides.length,
+                    itemBuilder: (itemBuilder, index) => ActiveRideCard(
+                      ride: _activeRides[index],
+                      decline: _declineRide,
+                    ),
+                  )
+                : const Center(
+                    child: Text("Još uvijek nemate aktivnih vožnji"),
+                  ),
           ),
         ],
       ),
