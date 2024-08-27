@@ -18,12 +18,12 @@ class DriverService {
     );
 
     if (response.statusCode == 200) {
-      DriverModel driver = DriverModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      DriverModel driver = DriverModel.fromJson(
+          json.decode(response.body) as Map<String, dynamic>);
       await _userService.setToken(driver.token!);
       await _userService.setRole("driver");
       return driver;
-    }
-    else {
+    } else {
       throw Exception("Failed to login");
     }
   }
@@ -44,7 +44,9 @@ class DriverService {
     );
 
     if (response.statusCode == 200) {
-      return (json.decode(response.body) as List<dynamic>).map((driver) => DriverCardModel.fromJson(driver)).toList();
+      return (json.decode(response.body) as List<dynamic>)
+          .map((driver) => DriverCardModel.fromJson(driver))
+          .toList();
     } else {
       throw Exception("Failed to get drivers");
     }
@@ -87,7 +89,8 @@ class DriverService {
   }
 
   Future<DriverUpdateBasicDetailsModel> getBasicAccountDetails() async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/driver/basic-account-details");
+    final url =
+        Uri.http(AppConfig.baseUrl, "/api/driver/basic-account-details");
     final token = await _userService.getToken();
     if (token == null) {
       throw Exception("Failed to get token.");
@@ -99,14 +102,18 @@ class DriverService {
     );
 
     if (response.statusCode == 200) {
-      return DriverUpdateBasicDetailsModel.fromJson(json.decode(response.body),);
+      return DriverUpdateBasicDetailsModel.fromJson(
+        json.decode(response.body),
+      );
     } else {
       throw Exception("Failed to get account details.");
     }
   }
 
-  Future<bool> updateBasicAccountDetails(DriverUpdateBasicDetailsModel driverUpdateBasicDetailsModel) async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/driver/basic-account-details");
+  Future<bool> updateBasicAccountDetails(
+      DriverUpdateBasicDetailsModel driverUpdateBasicDetailsModel) async {
+    final url =
+        Uri.http(AppConfig.baseUrl, "/api/driver/basic-account-details");
     final token = await _userService.getToken();
     if (token == null) {
       throw Exception("Failed to get token.");
@@ -115,13 +122,36 @@ class DriverService {
     final response = await http.put(
       url,
       headers: AppConfig.getAuthHeaders(token),
-      body: json.encode(driverUpdateBasicDetailsModel.toJson(),),
+      body: json.encode(
+        driverUpdateBasicDetailsModel.toJson(),
+      ),
     );
 
     if (response.statusCode == 200) {
       return true;
     } else {
       throw Exception("Failed to update account.");
+    }
+  }
+
+  Future<DriverUpdateMainDetailsModel> getMainAccountDetails() async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/driver/main-account-details");
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
+    }
+
+    final response = await http.get(
+      url,
+      headers: AppConfig.getAuthHeaders(token),
+    );
+
+    if (response.statusCode == 200) {
+      return DriverUpdateMainDetailsModel.fromJson(
+        json.decode(response.body),
+      );
+    } else {
+      throw Exception("Failed to get account main details.");
     }
   }
 }

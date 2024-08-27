@@ -10,11 +10,11 @@ public class DriverDtoRepository(
 {
     private readonly DataContext _dataContext = dataContext;
 
-    public async Task<DriverUpdateBasicDetails> GetAccountBasicDetails(int driverId)
+    public async Task<DriverUpdateBasicDetailsDto> GetAccountBasicDetails(int driverId)
     {
         return await _dataContext.Drivers
             .Where(d => d.Id == driverId)
-            .Select(d => new DriverUpdateBasicDetails
+            .Select(d => new DriverUpdateBasicDetailsDto
             {
                 Id = d.Id,
                 FirstName = d.FirstName,
@@ -43,6 +43,21 @@ public class DriverDtoRepository(
                     ? 5
                     : driver.Reviews.Average(review => review.Rating),
                 RatingCount = driver.Reviews.Count
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<DriverUpdateMainDetailsDto> GetAccountMainDetails(int driverId)
+    {
+        return await _dataContext.Drivers
+            .Where(d => d.Id == driverId)
+            .Select(d => new DriverUpdateMainDetailsDto
+            {
+                Username = d.Username,
+                ChangePassword = false,
+                NewPassword = null,
+                OldPassword = null,
+                RepeatNewPassword = null
             })
             .FirstOrDefaultAsync();
     }

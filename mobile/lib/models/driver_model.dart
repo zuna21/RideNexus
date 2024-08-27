@@ -214,3 +214,37 @@ class DriverUpdateBasicDetailsModel {
     return data;
   }
 }
+
+
+class DriverUpdateMainDetailsModel {
+  String? username;
+  bool? changePassword;
+  String? oldPassword;
+  String? newPassword;
+  String? repeatNewPassword;
+
+  DriverUpdateMainDetailsModel(
+      {this.username,
+      this.changePassword,
+      this.oldPassword,
+      this.newPassword,
+      this.repeatNewPassword});
+
+  DriverUpdateMainDetailsModel.fromJson(Map<String, dynamic> json) {
+    username = json['username'];
+    changePassword = json['changePassword'];
+    oldPassword = json['oldPassword'];
+    newPassword = json['newPassword'];
+    repeatNewPassword = json['repeatNewPassword'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['username'] = username;
+    data['changePassword'] = changePassword;
+    data['oldPassword'] = oldPassword;
+    data['newPassword'] = newPassword;
+    data['repeatNewPassword'] = repeatNewPassword;
+    return data;
+  }
+}

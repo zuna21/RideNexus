@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/driver_home_page.dart';
+import 'package:mobile/pages/driver/driver_username_password_page.dart';
 import 'package:mobile/services/driver_service.dart';
 
 class DriverBasicAccountDetails extends StatefulWidget {
@@ -98,6 +99,45 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const DriverUsernamePasswordPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      child: const Text("Korisničko ime i lozinka"),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: Divider(),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Osnovni Podaci"),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Divider(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     Row(
                       children: [
                         Flexible(

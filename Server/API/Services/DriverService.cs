@@ -19,7 +19,7 @@ public class DriverService(
     private readonly IDriverDtoRepository _driverDtoRepository = driverDtoRepository;
     private readonly IUserService _userService = userService;
 
-    public async Task<DriverUpdateBasicDetails> GetAccountBasicDetails()
+    public async Task<DriverUpdateBasicDetailsDto> GetAccountBasicDetails()
     {
         var driver = await _userService.GetDriver();
         if (driver == null) return null;
@@ -32,6 +32,13 @@ public class DriverService(
         var driver = await _userService.GetDriver();
         if (driver == null) return null;
         return await _driverDtoRepository.GetAccountDetails(driver.Id);
+    }
+
+    public async Task<DriverUpdateMainDetailsDto> GetAccountMainDetails()
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return null;
+        return await _driverDtoRepository.GetAccountMainDetails(driver.Id);
     }
 
     public async Task<List<DriverCardDto>> GetAllCards()
@@ -71,7 +78,7 @@ public class DriverService(
         return DriverMapper.DriverToDriverDto(driver);
     }
 
-    public async Task<bool> UpdateAccountBasicDetails(DriverUpdateBasicDetails driverUpdateBasicDetails)
+    public async Task<bool> UpdateAccountBasicDetails(DriverUpdateBasicDetailsDto driverUpdateBasicDetails)
     {
         var driver = await _userService.GetDriver();
         if (driver == null) return false;

@@ -67,7 +67,7 @@ public class DriverController(
 
     [HttpGet("basic-account-details")]  
     [Authorize]
-    public async Task<ActionResult<DriverUpdateBasicDetails>> GetBasicAccountDetails()
+    public async Task<ActionResult<DriverUpdateBasicDetailsDto>> GetBasicAccountDetails()
     {
         var details = await _driverService.GetAccountBasicDetails();
         if (details == null) return BadRequest("Something went wrong.");
@@ -76,10 +76,19 @@ public class DriverController(
 
     [HttpPut("basic-account-details")]
     [Authorize]
-    public async Task<ActionResult<bool>> UpdateBasicAccountDetails(DriverUpdateBasicDetails driverUpdateBasicDetails)
+    public async Task<ActionResult<bool>> UpdateBasicAccountDetails(DriverUpdateBasicDetailsDto driverUpdateBasicDetails)
     {
         var isUpdated = await _driverService.UpdateAccountBasicDetails(driverUpdateBasicDetails);
         if (isUpdated == false) return BadRequest("Failed to update account.");
         return true;
+    }
+
+    [HttpGet("main-account-details")]
+    [Authorize]
+    public async Task<ActionResult<DriverUpdateMainDetailsDto>> GetMainAccountDetails() 
+    {
+        var details = await _driverService.GetAccountMainDetails();
+        if (details == null) return BadRequest("Failed to get main detals.");
+        return details;
     }
 }

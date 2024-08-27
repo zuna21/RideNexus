@@ -60,7 +60,7 @@ public class DriverAccountDetailsDto
     public int UnseenChats { get; set; }
 }
 
-public class DriverUpdateBasicDetails
+public class DriverUpdateBasicDetailsDto
 {
     public int Id { get; set;}
     public string FirstName { get; set; }
@@ -68,4 +68,13 @@ public class DriverUpdateBasicDetails
     public string Phone { get; set; }
     public bool HasPrice { get; set; }
     public double Price { get; set; }
+}
+
+public class DriverUpdateMainDetailsDto
+{
+    public string Username { get; set; }
+    public bool ChangePassword { get; set; }
+    public string OldPassword { get; set; }
+    public string NewPassword { get; set; }
+    public string RepeatNewPassword { get; set; }
 }
