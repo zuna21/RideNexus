@@ -10,6 +10,22 @@ public class DriverDtoRepository(
 {
     private readonly DataContext _dataContext = dataContext;
 
+    public async Task<DriverUpdateBasicDetails> GetAccountBasicDetails(int driverId)
+    {
+        return await _dataContext.Drivers
+            .Where(d => d.Id == driverId)
+            .Select(d => new DriverUpdateBasicDetails
+            {
+                Id = d.Id,
+                FirstName = d.FirstName,
+                LastName = d.LastName,
+                HasPrice = d.HasPrice,
+                Phone = d.Phone,
+                Price = d.Price,
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<DriverAccountDetailsDto> GetAccountDetails(int driverId)
     {
         return await _dataContext.Drivers
@@ -46,7 +62,8 @@ public class DriverDtoRepository(
                         .FirstOrDefault(),
                 Rating = driver.Reviews.Count == 0
                     ? 5
-                    : driver.Reviews.Average(r => r.Rating)
+                    : driver.Reviews.Average(r => r.Rating),
+                Location = driver.Location
             })
             .ToListAsync();
     }
@@ -73,7 +90,8 @@ public class DriverDtoRepository(
                     .Where(car => car.IsActive)
                     .Select(car => car.RegistrationNumber)
                     .FirstOrDefault() ?? "",
-                Username = driver.Username
+                Username = driver.Username,
+                Location = driver.Location
             })
             .FirstOrDefaultAsync();
     }

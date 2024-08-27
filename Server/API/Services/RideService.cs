@@ -25,6 +25,39 @@ public class RideService(
     private readonly IRideDtoRepository _rideDtoRepository = rideDtoRepository;
     private readonly IClientRepository _clientRepository = clientRepository;
 
+    public async Task<bool> Accept(int rideId)
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return false;
+        var ride = await _rideRepository.GetById(rideId);
+        if (ride == null) return false;
+        var client = await _clientRepository.GetById(ride.ClientId);
+        if (client == null) return false;
+
+        // Trebalo bi takodjer provjeriti situaciju sta ako 
+        // client nema FCMToken
+        FirebaseAdmin.Messaging.Message message = new()
+        {
+            Notification = new FirebaseAdmin.Messaging.Notification
+            {
+                Title = "Vožnja prihvaćena ✅",
+                Body = $"Vozač {driver.LastName} {driver.FirstName} je označio Vašu vožnju kao prihaćenu. Očekujte ga za par minuta na vašoj lokaciji."
+            },
+            Data = new Dictionary<string, string>()
+            {
+                ["NotificationType"] = "Basic"
+            },
+            Token = client.FCMToken
+        };
+
+        var messaging = FirebaseMessaging.DefaultInstance;
+        var result = await messaging.SendAsync(message);
+
+        if (string.IsNullOrEmpty(result)) return false;
+        return true;
+
+    }
+
     public async Task<bool> Create(CreateRideDto createRideDto)
     {
         var client = await _userService.GetClient();

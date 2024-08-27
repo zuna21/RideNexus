@@ -35,6 +35,14 @@ namespace API.Controllers
             return declinedRide;
         }
 
+        [HttpGet("accept/{rideId}")]
+        public async Task<ActionResult<bool>> Accept(int rideId)
+        {
+            var isAccepted = await _rideService.Accept(rideId);
+            if (!isAccepted) return BadRequest("Failed to accept ride");
+            return false;
+        }
+
         [HttpPut("finish/{rideId}")]
         public async Task<ActionResult<bool>> Finish(int rideId, FinishRideDto finishRideDto)
         {

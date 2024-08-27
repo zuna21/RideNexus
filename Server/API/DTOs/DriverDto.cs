@@ -31,6 +31,7 @@ public class DriverCardDto
     public double Price { get; set; }
     public double Rating { get; set; }
     public int RatingCount { get; set; }
+    public string Location { get; set; }
 }
 
 public class DriverDetailsDto
@@ -44,6 +45,7 @@ public class DriverDetailsDto
     public double Rating { get; set; }
     public double RatingCount { get; set; }
     public string Phone { get; set; }
+    public string Location { get; set; }
     
 }
 
@@ -56,4 +58,14 @@ public class DriverAccountDetailsDto
     public double Rating { get; set; }
     public int RatingCount { get; set; }
     public int UnseenChats { get; set; }
+}
+
+public class DriverUpdateBasicDetails
+{
+    public int Id { get; set;}
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Phone { get; set; }
+    public bool HasPrice { get; set; }
+    public double Price { get; set; }
 }

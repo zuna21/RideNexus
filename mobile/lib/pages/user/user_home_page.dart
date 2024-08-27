@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/firebase_messaging_service.dart';
 import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/selection_page.dart';
@@ -18,6 +19,7 @@ class _UserHomePageState extends State<UserHomePage> {
   final _clientService = ClientService();
   final _driverService = DriverService();
   final _locationService = LocationService();
+  final _firebaseMessagingService = FirebaseMessagingService();
   List<DriverCardModel> _drivers = [];
 
   @override
@@ -25,6 +27,9 @@ class _UserHomePageState extends State<UserHomePage> {
     super.initState();
     getLocationPermission();
     getAll();
+    _firebaseMessagingService.grandPermissions();
+    _firebaseMessagingService.updateFirebaseMessageToken();
+    _firebaseMessagingService.receiveMessage(context);
   }
 
   void getLocationPermission() async {

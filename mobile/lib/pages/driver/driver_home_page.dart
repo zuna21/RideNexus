@@ -4,6 +4,7 @@ import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/models/location_model.dart';
 import 'package:mobile/pages/driver/cars_page.dart';
+import 'package:mobile/pages/driver/driver_basic_account_details.dart';
 import 'package:mobile/pages/driver/driver_login_page.dart';
 import 'package:mobile/pages/driver/messages_page.dart';
 import 'package:mobile/pages/driver/reviews_page.dart';
@@ -12,6 +13,8 @@ import 'package:mobile/pages/selection_page.dart';
 import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/big_select_button.dart';
 import 'package:mobile/widgets/rating.dart';
+
+enum PopupMenuItemValue { first, second, third }
 
 class DriverHomePage extends StatefulWidget {
   const DriverHomePage({super.key});
@@ -26,6 +29,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
   final _firebaseMessagingService = FirebaseMessagingService();
   DriverAccountDetailsModel? _driver;
   LocationModel? _location;
+  PopupMenuItemValue? selectedItem;
 
   @override
   void initState() {
@@ -83,6 +87,19 @@ class _DriverHomePageState extends State<DriverHomePage> {
     }
   }
 
+  void _onPopupMenuSelect(PopupMenuItemValue value) {
+    switch (value) {
+      case PopupMenuItemValue.first:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => DriverBasicAccountDetails(),
+          ),
+        );
+        break;
+      default:
+    }
+  }
+
   void onLogout() async {
     await _driverService.logout();
     if (mounted) {
@@ -103,6 +120,18 @@ class _DriverHomePageState extends State<DriverHomePage> {
           automaticallyImplyLeading: false,
           title: Text(_driver == null ? "Username" : _driver!.username!),
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          actions: [
+            PopupMenuButton<PopupMenuItemValue>(
+              icon: const Icon(Icons.settings),
+              onSelected: (value) => _onPopupMenuSelect(value),
+              itemBuilder: (context) => [
+                const PopupMenuItem<PopupMenuItemValue>(
+                  value: PopupMenuItemValue.first,
+                  child: Text("Ažuriraj profil"),
+                ),
+              ],
+            )
+          ],
         ),
         body: _driver != null
             ? SingleChildScrollView(

@@ -9,6 +9,7 @@ public class Driver
     public string Phone { get; set; }
     public string Password { get; set; }
     public bool IsWork { get; set; } = false;
+    public bool HasPrice { get; set; } = false;
     public double Price { get; set; } = 0;
     public double Latitude { get; set; } = 0;
     public double Longitude { get; set; } = 0;

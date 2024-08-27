@@ -19,6 +19,14 @@ public class DriverService(
     private readonly IDriverDtoRepository _driverDtoRepository = driverDtoRepository;
     private readonly IUserService _userService = userService;
 
+    public async Task<DriverUpdateBasicDetails> GetAccountBasicDetails()
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return null;
+        return await _driverDtoRepository.GetAccountBasicDetails(driver.Id);
+        
+    }
+
     public async Task<DriverAccountDetailsDto> GetAccountDetails()
     {
         var driver = await _userService.GetDriver();
@@ -61,6 +69,23 @@ public class DriverService(
             return null;
         }
         return DriverMapper.DriverToDriverDto(driver);
+    }
+
+    public async Task<bool> UpdateAccountBasicDetails(DriverUpdateBasicDetails driverUpdateBasicDetails)
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return false;
+
+        driver.FirstName = driverUpdateBasicDetails.FirstName;
+        driver.LastName = driverUpdateBasicDetails.LastName;
+        driver.Phone = driverUpdateBasicDetails.Phone;
+        driver.HasPrice = driverUpdateBasicDetails.HasPrice;
+        driver.Price = driverUpdateBasicDetails.HasPrice
+            ? driverUpdateBasicDetails.Price
+            : 0;
+
+        await _driverRepository.SaveAllAsync();
+        return true;
     }
 
     public async Task<bool> UpdateFCMToken(FCMDto fCMDto)

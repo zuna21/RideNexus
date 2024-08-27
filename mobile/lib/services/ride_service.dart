@@ -83,4 +83,23 @@ class RideService {
       throw Exception("Failed to finish ride.");
     }
   }
+
+  Future<bool> accept(int rideId) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/rides/accept/$rideId");
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token");
+    }
+
+    final response = await http.get(
+      url,
+      headers: AppConfig.getAuthHeaders(token),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception("Failed to accept ride");
+    }
+  }
 }

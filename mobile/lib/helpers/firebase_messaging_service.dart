@@ -72,7 +72,6 @@ class FirebaseMessagingService {
 
   void _getToken() async {
     final token = await FirebaseMessaging.instance.getToken();
-    print(token);
     if (token != null) {
       FcmModel fcmModel = FcmModel();
       fcmModel.token = token;
@@ -92,7 +91,13 @@ class FirebaseMessagingService {
   }
 
   Future<bool> updateToken(FcmModel fcmModel) async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/driver/update-fcm-token");
+    final Uri url;
+    final role = await _userService.getRole();
+    if (role == "driver") {
+      url = Uri.http(AppConfig.baseUrl, "/api/driver/update-fcm-token");
+    } else {
+      url = Uri.http(AppConfig.baseUrl, "/api/client/update-fcm-token");
+    }
     final token = await _userService.getToken();
 
     final response = await http.put(url,

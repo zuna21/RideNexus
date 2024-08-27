@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/ride_model.dart';
 import 'package:mobile/pages/driver/finish_ride_page.dart';
+import 'package:mobile/services/ride_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActiveRideCard extends StatefulWidget {
@@ -14,7 +15,19 @@ class ActiveRideCard extends StatefulWidget {
 }
 
 class _ActiveRideCardState extends State<ActiveRideCard> {
+  final _rideService = RideService();
+
+
   void _openNavigation() async {
+    bool isAccepted = false;
+    try {
+      isAccepted = await _rideService.accept(widget.ride.id!);
+    } catch(e) {
+      print(e.toString());
+    }
+
+    if (!isAccepted) return;
+
     if (widget.ride.latitude == null || widget.ride.longitude == null)
       return; // bolje je neku poruku napisati
     final Uri url;

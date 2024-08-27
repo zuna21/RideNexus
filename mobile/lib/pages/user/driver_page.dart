@@ -134,12 +134,12 @@ class _DriverPageState extends State<DriverPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Row(
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Trenutna lokacija:"),
-                                  Text("Doboj"),
+                                  const Text("Trenutna lokacija:"),
+                                  Text(_driver!.location ?? "Nema lokacije"),
                                 ],
                               ),
                               const Divider(),

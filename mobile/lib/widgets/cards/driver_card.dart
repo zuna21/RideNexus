@@ -84,12 +84,12 @@ class DriverCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Chip(
-                        avatar: Icon(Icons.location_on_outlined),
-                        label: Text("Doboj"),
+                        avatar: const Icon(Icons.location_on_outlined),
+                        label: Text(driver.location ?? "Nema lokacije"),
                       ),
                     ],
                   ),

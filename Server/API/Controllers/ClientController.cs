@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -24,6 +25,15 @@ namespace API.Controllers
             var client = await _clientService.Login(loginClientDto);
             if (client == null) return BadRequest("Failed to login client");
             return client;
+        }
+
+        [HttpPut("update-fcm-token")]
+        [Authorize]
+        public async Task<ActionResult<bool>> UdateFCMToken(FCMDto fCMDto) 
+        {
+            var isUpdated = await _clientService.UpdateFCMToken(fCMDto);
+            if (isUpdated == false) return BadRequest("Failed to update fcm token.");
+            return true;
         }
     }
 }

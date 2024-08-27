@@ -47,6 +47,7 @@ class DriverCardModel {
   double? price;
   double? rating;
   int? ratingCount;
+  String? location;
 
   DriverCardModel(
       {this.id,
@@ -54,15 +55,18 @@ class DriverCardModel {
       this.car,
       this.price,
       this.rating,
-      this.ratingCount});
+      this.ratingCount,
+      this.location
+      });
 
   DriverCardModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = int.tryParse(json['id'].toString());
     fullName = json['fullName'];
     car = json['car'];
     price = double.parse(json['price'].toString());
     rating = double.parse(json['rating'].toString());
-    ratingCount = json['ratingCount'];
+    ratingCount = int.tryParse(json['ratingCount'].toString());
+    location = json['location'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,6 +77,7 @@ class DriverCardModel {
     data['price'] = price;
     data['rating'] = rating;
     data['ratingCount'] = ratingCount;
+    data['location'] = location;
     return data;
   }
 }
@@ -88,6 +93,7 @@ class DriverDetailsModel {
   double? rating;
   int? ratingCount;
   String? phone;
+  String? location;
 
   DriverDetailsModel(
       {this.id,
@@ -98,18 +104,20 @@ class DriverDetailsModel {
       this.price,
       this.rating,
       this.ratingCount,
-      this.phone});
+      this.phone,
+      this.location});
 
   DriverDetailsModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = int.tryParse(json['id'].toString());
     username = json['username'];
     fullName = json['fullName'];
     car = json['car'];
     registrationNumber = json['registrationNumber'];
     price = double.parse(json['price'].toString());
     rating = double.parse(json['rating'].toString());
-    ratingCount = json['ratingCount'];
+    ratingCount = int.tryParse(json['ratingCount'].toString());
     phone = json['phone'];
+    location = json['location'];
   }
 
   Map<String, dynamic> toJson() {
@@ -123,6 +131,7 @@ class DriverDetailsModel {
     data['rating'] = rating;
     data['ratingCount'] = ratingCount;
     data['phone'] = phone;
+    data['location'] = location;
     return data;
   }
 }
@@ -165,6 +174,43 @@ class DriverAccountDetailsModel {
     data['rating'] = rating;
     data['ratingCount'] = ratingCount;
     data['unseenChats'] = unseenChats;
+    return data;
+  }
+}
+
+class DriverUpdateBasicDetailsModel {
+  int? id;
+  String? firstName;
+  String? lastName;
+  String? phone;
+  bool? hasPrice;
+  double? price;
+
+  DriverUpdateBasicDetailsModel(
+      {this.id,
+      this.firstName,
+      this.lastName,
+      this.phone,
+      this.hasPrice,
+      this.price});
+
+  DriverUpdateBasicDetailsModel.fromJson(Map<String, dynamic> json) {
+    id = int.tryParse(json['id'].toString());
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    phone = json['phone'];
+    hasPrice = json['hasPrice'];
+    price = double.tryParse(json['price'].toString());
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['lastName'] = lastName;
+    data['phone'] = phone;
+    data['hasPrice'] = hasPrice;
+    data['price'] = price;
     return data;
   }
 }

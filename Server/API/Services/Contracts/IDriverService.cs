@@ -10,4 +10,6 @@ public interface IDriverService
     Task<List<DriverCardDto>> GetAllCards();
     Task<bool> UpdateFCMToken(FCMDto fCMDto);
     Task<DriverDetailsDto> GetDetails(int driverId);
+    Task<DriverUpdateBasicDetails> GetAccountBasicDetails();
+    Task<bool> UpdateAccountBasicDetails(DriverUpdateBasicDetails driverUpdateBasicDetails);
 }
