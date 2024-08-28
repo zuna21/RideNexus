@@ -13,4 +13,5 @@ public interface IDriverService
     Task<DriverUpdateBasicDetailsDto> GetAccountBasicDetails();
     Task<bool> UpdateAccountBasicDetails(DriverUpdateBasicDetailsDto driverUpdateBasicDetails);
     Task<DriverUpdateMainDetailsDto> GetAccountMainDetails();
+    Task<bool> UpdateAccountMainDetails(DriverUpdateMainDetailsDto driverUpdateMainDetailsDto);
 }

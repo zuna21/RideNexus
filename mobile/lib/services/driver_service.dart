@@ -154,4 +154,24 @@ class DriverService {
       throw Exception("Failed to get account main details.");
     }
   }
+
+  Future<bool> updateMainAccountDetails(DriverUpdateMainDetailsModel driverUpdateMainDetailsModel) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/driver/main-account-details");
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
+    }
+
+    final response = await http.put(
+      url,
+      headers: AppConfig.getAuthHeaders(token),
+      body: json.encode(driverUpdateMainDetailsModel.toJson(),),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception("Failed to update main details.");
+    }
+  }
 }

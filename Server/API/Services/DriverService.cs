@@ -95,6 +95,30 @@ public class DriverService(
         return true;
     }
 
+    public async Task<bool> UpdateAccountMainDetails(DriverUpdateMainDetailsDto driverUpdateMainDetailsDto)
+    {
+        var driver = await _userService.GetDriver();
+        if (driver == null) return false;
+
+        if (!string.Equals(driverUpdateMainDetailsDto.Username.ToLower(), driver.Username.ToLower()))
+        {
+            var isTaken = await _driverRepository.IsUsernameTaken(driverUpdateMainDetailsDto.Username.ToLower());
+            if (isTaken) return false; //Bolje bi bilo obavijestiti da je korisnicko ime zauzeto
+            driver.Username = driverUpdateMainDetailsDto.Username.ToLower();
+        }
+
+        if (driverUpdateMainDetailsDto.ChangePassword)
+        {
+            var isOldPasswordCorrect = PasswordManager.VerifyDriverPassword(driver, driverUpdateMainDetailsDto.OldPassword);
+            if (isOldPasswordCorrect != PasswordVerificationResult.Success) return false;
+            if (!PasswordManager.ArePasswordsEqual(driverUpdateMainDetailsDto.NewPassword, driverUpdateMainDetailsDto.RepeatNewPassword)) return false;
+            driver.Password = PasswordManager.HashDriverPassword(driver, driverUpdateMainDetailsDto.NewPassword);
+        }
+
+        await _driverRepository.SaveAllAsync();
+        return true;
+    }
+
     public async Task<bool> UpdateFCMToken(FCMDto fCMDto)
     {
         var driver = await _userService.GetDriver();

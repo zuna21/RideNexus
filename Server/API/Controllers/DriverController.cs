@@ -91,4 +91,13 @@ public class DriverController(
         if (details == null) return BadRequest("Failed to get main detals.");
         return details;
     }
+
+    [HttpPut("main-account-details")]
+    [Authorize]
+    public async Task<ActionResult<bool>> UpdateMainAccountDetails(DriverUpdateMainDetailsDto driverUpdateMainDetails)
+    {
+        var isUpdated = await _driverService.UpdateAccountMainDetails(driverUpdateMainDetails);
+        if (isUpdated == false) return BadRequest("Failed to update main details.");
+        return true;
+    }
 }

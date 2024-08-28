@@ -21,6 +21,11 @@ public class DriverRepository(
         );
     }
 
+    public async Task<bool> IsUsernameTaken(string username)
+    {
+        return await _dataContext.Drivers.AnyAsync(d => string.Equals(d.Username, username.ToLower()));
+    }
+
     public void Register(Driver driver)
     {
         _dataContext.Drivers.Add(driver);
