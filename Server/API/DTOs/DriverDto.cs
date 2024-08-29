@@ -68,6 +68,7 @@ public class DriverUpdateBasicDetailsDto
     public string Phone { get; set; }
     public bool HasPrice { get; set; }
     public double Price { get; set; }
+    public string ImageUrl { get; set; }
 }
 
 public class DriverUpdateMainDetailsDto

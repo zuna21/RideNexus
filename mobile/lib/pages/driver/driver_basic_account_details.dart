@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:mobile/app_config.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/driver_home_page.dart';
 import 'package:mobile/pages/driver/driver_username_password_page.dart';
 import 'package:mobile/services/driver_service.dart';
+import 'package:mobile/services/photo_service.dart';
 
 class DriverBasicAccountDetails extends StatefulWidget {
   const DriverBasicAccountDetails({super.key});
@@ -15,13 +19,17 @@ class DriverBasicAccountDetails extends StatefulWidget {
 class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
   final _formKey = GlobalKey<FormState>();
   final _driverService = DriverService();
-
-  bool _getDetails = false;
+  final _priceController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _priceController = TextEditingController();
+  final _photoService = PhotoService();
+
+  bool _getDetails = false;
   bool _hasPrice = false;
+  String? _profilePhotoNetwork;
+  File? _profilePhotoFile;
+  bool _isFormChanged = false;
 
   @override
   void initState() {
@@ -39,9 +47,52 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
         _phoneController.text = details.phone!;
         _priceController.text = details.price!.toString();
         _hasPrice = details.hasPrice!;
+        _profilePhotoNetwork = details.imageUrl;
+        _profilePhotoFile = null;
+        print(details.imageUrl);
       });
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  void _uploadPhoto() async {
+    try {
+      final photo = await _photoService.getImageFromGallery();
+      setState(() {
+        _profilePhotoFile = photo;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _submitPhoto() async {
+    if (_profilePhotoFile == null) return;
+    try {
+      final photo = await _photoService.uploadDriverProfile(_profilePhotoFile!);
+      setState(() {
+        _profilePhotoFile = null;
+        _profilePhotoNetwork = photo.imageUrl;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _deleteProfile() async {
+    if (_profilePhotoNetwork == null) return;
+
+    try {
+      await _photoService.deleteDriverProfile();
+      setState(() {
+        _profilePhotoFile = null;
+        _profilePhotoNetwork = null;
+      });
+    } catch (e) {
+      print(
+        e.toString(),
+      );
     }
   }
 
@@ -54,6 +105,7 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
     accountDetails.lastName = _lastNameController.text;
     accountDetails.phone = _phoneController.text;
     accountDetails.hasPrice = _hasPrice;
+    accountDetails.imageUrl = _profilePhotoNetwork;
     accountDetails.price = double.tryParse(_priceController.text);
 
     bool isUpdated = false;
@@ -139,10 +191,70 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                       height: 15,
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CircleAvatar(
+                          minRadius: 100,
+                          backgroundImage: _profilePhotoFile != null
+                              ? FileImage(_profilePhotoFile!)
+                              : NetworkImage(_profilePhotoNetwork ??
+                                  AppConfig.defaultProfile),
+                        ),
+                        Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: _uploadPhoto,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                              ),
+                              child: const Text("Postavi"),
+                            ),
+                            ElevatedButton(
+                              onPressed: _profilePhotoFile != null
+                                  ? _submitPhoto
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                              ),
+                              child: const Text("Objavi"),
+                            ),
+                            ElevatedButton(
+                              onPressed: _profilePhotoNetwork != null
+                              ? _deleteProfile
+                              : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text("Izbrisi"),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
                       children: [
                         Flexible(
                           child: TextFormField(
                             controller: _firstNameController,
+                            onChanged: (value) {
+                              setState(() {
+                                _isFormChanged = true;
+                              });
+                            },
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Ime',
@@ -161,6 +273,11 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                         Flexible(
                           child: TextFormField(
                             controller: _lastNameController,
+                            onChanged: (value) {
+                              setState(() {
+                                _isFormChanged = true;
+                              });
+                            },
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Prezime',
@@ -180,6 +297,11 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                     ),
                     TextFormField(
                       controller: _phoneController,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFormChanged = true;
+                        });
+                      },
                       keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -231,6 +353,11 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                     TextFormField(
                       readOnly: !_hasPrice,
                       keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFormChanged = true;
+                        });
+                      },
                       controller: _priceController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -247,7 +374,9 @@ class _DriverBasicAccountDetailsState extends State<DriverBasicAccountDetails> {
                       height: 20,
                     ),
                     ElevatedButton(
-                      onPressed: _onSubmit,
+                      onPressed: _isFormChanged
+                      ? _onSubmit
+                      : null,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(40),
                         backgroundColor:

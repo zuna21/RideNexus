@@ -70,6 +70,7 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IRideService, RideService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 
 FirebaseApp.Create(new AppOptions()
@@ -87,5 +88,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseStaticFiles();
+}
 
 app.Run();

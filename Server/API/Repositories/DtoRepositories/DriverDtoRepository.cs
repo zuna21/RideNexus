@@ -22,6 +22,7 @@ public class DriverDtoRepository(
                 HasPrice = d.HasPrice,
                 Phone = d.Phone,
                 Price = d.Price,
+                ImageUrl = d.ImageUrl,
             })
             .FirstOrDefaultAsync();
     }

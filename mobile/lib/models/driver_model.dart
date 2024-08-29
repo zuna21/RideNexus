@@ -185,6 +185,7 @@ class DriverUpdateBasicDetailsModel {
   String? phone;
   bool? hasPrice;
   double? price;
+  String? imageUrl;
 
   DriverUpdateBasicDetailsModel(
       {this.id,
@@ -192,7 +193,8 @@ class DriverUpdateBasicDetailsModel {
       this.lastName,
       this.phone,
       this.hasPrice,
-      this.price});
+      this.price,
+      this.imageUrl});
 
   DriverUpdateBasicDetailsModel.fromJson(Map<String, dynamic> json) {
     id = int.tryParse(json['id'].toString());
@@ -201,6 +203,7 @@ class DriverUpdateBasicDetailsModel {
     phone = json['phone'];
     hasPrice = json['hasPrice'];
     price = double.tryParse(json['price'].toString());
+    imageUrl = json['imageUrl'];
   }
 
   Map<String, dynamic> toJson() {
@@ -211,6 +214,7 @@ class DriverUpdateBasicDetailsModel {
     data['phone'] = phone;
     data['hasPrice'] = hasPrice;
     data['price'] = price;
+    data['imageUrl'] = imageUrl;
     return data;
   }
 }

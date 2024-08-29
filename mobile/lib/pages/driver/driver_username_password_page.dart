@@ -21,6 +21,7 @@ class _DriverUsernamePasswordPageState
   final _newPasswordController = TextEditingController();
   final _repeatNewPasswordController = TextEditingController();
   bool _changePassword = false;
+  bool _isFormChanged = false;
 
   @override
   void initState() {
@@ -95,6 +96,11 @@ class _DriverUsernamePasswordPageState
                   children: [
                     TextFormField(
                       controller: _usernameController,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFormChanged = true;
+                        });
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Korisničko ime',
@@ -109,7 +115,7 @@ class _DriverUsernamePasswordPageState
                     const SizedBox(
                       height: 15,
                     ),
-                    const Text("Želite li navesti promijeniti lozinku?"),
+                    const Text("Želite li promijeniti lozinku?"),
                     Row(
                       children: [
                         Flexible(
@@ -141,6 +147,11 @@ class _DriverUsernamePasswordPageState
                     TextFormField(
                       controller: _oldPasswordController,
                       readOnly: !_changePassword,
+                      onChanged: (value) {
+                        setState(() {
+                          _isFormChanged = false;
+                        });
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Stara lozinka',
@@ -159,6 +170,11 @@ class _DriverUsernamePasswordPageState
                     TextFormField(
                       controller: _newPasswordController,
                       readOnly: !_changePassword,
+                      onChanged: (value) {
+                        setState(() {
+                          _changePassword = true;
+                        });
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nova lozinka',
@@ -177,6 +193,11 @@ class _DriverUsernamePasswordPageState
                     TextFormField(
                       controller: _repeatNewPasswordController,
                       readOnly: !_changePassword,
+                      onChanged: (value) {
+                        setState(() {
+                          _changePassword = true;
+                        });
+                      },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Ponovite novu lozinku',
@@ -195,7 +216,9 @@ class _DriverUsernamePasswordPageState
                       height: 30,
                     ),
                     ElevatedButton(
-                      onPressed: _onSubmit,
+                      onPressed: _isFormChanged
+                      ? _onSubmit
+                      : null,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(40),
                         backgroundColor:

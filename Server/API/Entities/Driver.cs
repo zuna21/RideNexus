@@ -15,6 +15,8 @@ public class Driver
     public double Longitude { get; set; } = 0;
     public string Location { get; set; }
     public string FCMToken { get; set; }
+    public string ImageUrl { get; set; }
+    public string ImagePath { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Car> Cars { get; set; } = [];
