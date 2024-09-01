@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 class LocationService {
   final _userService = UserService();
 
+
   Future<LocationModel> getAndUpdateCurrentLocation() async {
     final location = LocationModel();
     const LocationSettings locationSettings = LocationSettings(
@@ -27,6 +28,9 @@ class LocationService {
 
     // sacuvati u bazi
     final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
+    }
     final role = await _userService.getRole();
     Uri? url;
     role == "driver"
@@ -34,10 +38,7 @@ class LocationService {
     : url = Uri.http(AppConfig.baseUrl, "/api/location/client");
     final response = await http.put(
       url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
+      headers: AppConfig.getAuthHeaders(token),
       body: json.encode(location.toJson())
     );
 
@@ -46,29 +47,40 @@ class LocationService {
     } else {
       throw Exception("Failed to update location");
     }
-
   }
 
 
+  Future<LocationModel> updateCurrentLocation(Position position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
 
-  Future<bool> havePermissionForLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return false;
+    final city = placemarks[0].locality;
+
+    final locationModel = LocationModel();
+    locationModel.latitude = position.latitude;
+    locationModel.longitude = position.longitude;
+    locationModel.location = city;
+
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
     }
 
-    return true;
+    final role = await _userService.getRole();
+    Uri? url;
+    role == "driver"
+    ? url = Uri.http(AppConfig.baseUrl, "/api/location/driver")
+    : url = Uri.http(AppConfig.baseUrl, "/api/location/client");
+    final response = await http.put(
+      url,
+      headers: AppConfig.getAuthHeaders(token),
+      body: json.encode(locationModel.toJson())
+    );
+
+    if (response.statusCode == 200) {
+      return LocationModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Failed to update location");
+    }
   }
 }

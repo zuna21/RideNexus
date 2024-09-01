@@ -55,7 +55,10 @@ public class DriverAccountDetailsDto
     public string Username { get; set; }
     public string FullName { get; set; }
     public double Price { get; set; }
+    public bool HasPrice { get; set; }
     public double Rating { get; set; }
+    public string Location { get; set; }
+    public string ProfilePhotoUrl { get; set; }
     public int RatingCount { get; set; }
     public int UnseenChats { get; set; }
 }

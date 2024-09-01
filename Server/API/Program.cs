@@ -60,6 +60,7 @@ builder.Services.AddScoped<IChatDtoRepository, ChatDtoRepository>();
 builder.Services.AddScoped<IReviewDtoRepository, ReviewDtoRepository>();
 builder.Services.AddScoped<IRideRepository, RideRepository>();
 builder.Services.AddScoped<IRideDtoRepository, RideDtoRepository>();
+builder.Services.AddScoped<ICarDtoRepository, CarDtoRepository>();
 
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,24 +14,8 @@ import 'package:mobile/widgets/notifications/basic_notification.dart';
 class FirebaseMessagingService {
   final _userService = UserService();
 
-  void grandPermissions() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    print('User granted permission: ${settings.authorizationStatus}');
-  }
-
-  void receiveMessage(BuildContext context) {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  StreamSubscription<RemoteMessage> receiveMessage(BuildContext context) {
+    return FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Message data: ${message.data}');
       print(message.data['NotificationType']);
       print(message.notification!.title);

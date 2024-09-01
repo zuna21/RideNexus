@@ -1,17 +1,19 @@
+import 'dart:async';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/app_config.dart';
 import 'package:mobile/helpers/firebase_messaging_service.dart';
-import 'package:mobile/helpers/location_service.dart';
 import 'package:mobile/models/driver_model.dart';
-import 'package:mobile/models/location_model.dart';
 import 'package:mobile/pages/driver/cars_page.dart';
 import 'package:mobile/pages/driver/driver_basic_account_details.dart';
-import 'package:mobile/pages/driver/driver_login_page.dart';
 import 'package:mobile/pages/driver/messages_page.dart';
 import 'package:mobile/pages/driver/reviews_page.dart';
 import 'package:mobile/pages/driver/rides_page.dart';
 import 'package:mobile/pages/selection_page.dart';
 import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/big_select_button.dart';
+import 'package:mobile/widgets/location_chip.dart';
 import 'package:mobile/widgets/rating.dart';
 
 enum PopupMenuItemValue { first, second, third }
@@ -25,51 +27,21 @@ class DriverHomePage extends StatefulWidget {
 
 class _DriverHomePageState extends State<DriverHomePage> {
   final _driverService = DriverService();
-  final _locationService = LocationService();
   final _firebaseMessagingService = FirebaseMessagingService();
   DriverAccountDetailsModel? _driver;
-  LocationModel? _location;
   PopupMenuItemValue? selectedItem;
+  StreamSubscription<RemoteMessage>? _receiveMessageStream;
 
   @override
   void initState() {
     super.initState();
     getAccountDetails();
-    getLocationPermission();
-    _firebaseMessagingService.grandPermissions();
     _firebaseMessagingService.updateFirebaseMessageToken();
-    _firebaseMessagingService.receiveMessage(context);
+    _receiveMessage();
   }
 
-  void getLocationPermission() async {
-    final havePermission = await _locationService.havePermissionForLocation();
-    if (!havePermission) {
-      await _driverService.logout();
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const DriverLoginPage(),
-          ),
-        );
-      }
-    } else {
-      getAndUpdateLocation();
-    }
-  }
-
-  void getAndUpdateLocation() async {
-    LocationModel? location;
-    try {
-      location = await _locationService.getAndUpdateCurrentLocation();
-    } catch (e) {
-      print(e);
-    }
-
-    if (location != null) {
-      setState(() {
-        _location = location;
-      });
-    }
+  void _receiveMessage() {
+    _receiveMessageStream = _firebaseMessagingService.receiveMessage(context);
   }
 
   void getAccountDetails() async {
@@ -87,12 +59,13 @@ class _DriverHomePageState extends State<DriverHomePage> {
     }
   }
 
+
   void _onPopupMenuSelect(PopupMenuItemValue value) {
     switch (value) {
       case PopupMenuItemValue.first:
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => DriverBasicAccountDetails(),
+            builder: (_) => const DriverBasicAccountDetails(),
           ),
         );
         break;
@@ -109,6 +82,12 @@ class _DriverHomePageState extends State<DriverHomePage> {
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _receiveMessageStream?.cancel();
+    super.dispose();
   }
 
   @override
@@ -164,10 +143,13 @@ class _DriverHomePageState extends State<DriverHomePage> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               shape: BoxShape.circle,
-                              image: const DecorationImage(
+                              image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image:
-                                    NetworkImage("https://picsum.photos/500"),
+                                image: NetworkImage(
+                                  _driver!.profilePhotoUrl == null
+                                      ? AppConfig.defaultProfile
+                                      : _driver!.profilePhotoUrl!,
+                                ),
                               ),
                             ),
                           ),
@@ -179,27 +161,29 @@ class _DriverHomePageState extends State<DriverHomePage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Text(
-                            _driver!.fullName!,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Chip(
-                                label: Text(_location == null
-                                    ? "Nema lokacije"
-                                    : _location!.location!),
-                                avatar: const Icon(Icons.location_on),
+                              Text(
+                                _driver!.fullName!,
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text("${_driver!.price!} KM/km")
+                              Text(_driver!.hasPrice!
+                                  ? "${_driver!.price!} KM/km"
+                                  : "Cijena nije navedena"),
                             ],
                           ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              LocationChip(),
+                            ],
+                          )
                         ],
                       ),
                     ),

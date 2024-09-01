@@ -15,7 +15,7 @@ class CarModel {
       this.createdAt});
 
   CarModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = int.tryParse(json['id'].toString());
     make = json['make'];
     model = json['model'];
     registrationNumber = json['registrationNumber'];

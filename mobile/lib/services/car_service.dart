@@ -21,7 +21,9 @@ class CarService {
     );
 
     if (response.statusCode == 200) {
-      return (json.decode(response.body) as List<dynamic>).map((e) => CarModel.fromJson(e)).toList();
+      return (json.decode(response.body) as List<dynamic>)
+          .map((e) => CarModel.fromJson(e))
+          .toList();
     } else {
       throw Exception("Failed to load cars.");
     }
@@ -31,17 +33,16 @@ class CarService {
     final url = Uri.http(AppConfig.baseUrl, "/api/cars");
     final token = await _userService.getToken();
 
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
-      body: json.encode(createCar.toJson())
-    );
+    final response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: json.encode(createCar.toJson()));
 
     if (response.statusCode == 200) {
-      return CarModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      return CarModel.fromJson(
+          json.decode(response.body) as Map<String, dynamic>);
     } else {
       throw Exception("Failed to create car");
     }
@@ -63,6 +64,47 @@ class CarService {
       return int.parse(response.body);
     } else {
       throw Exception("Failed to delete car");
+    }
+  }
+
+  Future<CarModel> get(int carId) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/cars/$carId");
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
+    }
+
+    final response = await http.get(
+      url,
+      headers: AppConfig.getAuthHeaders(token),
+    );
+
+    if (response.statusCode == 200) {
+      return CarModel.fromJson(
+        json.decode(response.body),
+      );
+    } else {
+      throw Exception("Failed to get car details.");
+    }
+  }
+
+  Future<CarModel> update(int carId, CreateCarModel createCarModel) async {
+    final url = Uri.http(AppConfig.baseUrl, "/api/cars/$carId");
+    final token = await _userService.getToken();
+    if (token == null) {
+      throw Exception("Failed to get token.");
+    }
+
+    final response = await http.put(url,
+        headers: AppConfig.getAuthHeaders(token),
+        body: json.encode(createCarModel.toJson()));
+
+    if (response.statusCode == 200) {
+      return CarModel.fromJson(
+        json.decode(response.body),
+      );
+    } else {
+      throw Exception("Failed to update car.");
     }
   }
 }

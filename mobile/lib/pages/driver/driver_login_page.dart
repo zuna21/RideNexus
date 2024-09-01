@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/driver_model.dart';
-import 'package:mobile/pages/driver/driver_home_page.dart';
+import 'package:mobile/pages/driver/driver_permissions_page.dart';
 import 'package:mobile/pages/driver/driver_register_page.dart';
 import 'package:mobile/services/driver_service.dart';
 
@@ -31,7 +31,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
       if (driver != null && mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => const DriverHomePage(),
+            builder: (_) => const DriverPermissionsPage(),
           ),
         );
       }

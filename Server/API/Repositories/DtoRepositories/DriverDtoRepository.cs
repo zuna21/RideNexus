@@ -43,7 +43,10 @@ public class DriverDtoRepository(
                 Rating = driver.Reviews.Count == 0 
                     ? 5
                     : driver.Reviews.Average(review => review.Rating),
-                RatingCount = driver.Reviews.Count
+                RatingCount = driver.Reviews.Count,
+                HasPrice = driver.HasPrice,
+                Location = driver.Location,
+                ProfilePhotoUrl = driver.ImageUrl,
             })
             .FirstOrDefaultAsync();
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/car_model.dart';
 import 'package:mobile/pages/driver/create_car_page.dart';
+import 'package:mobile/pages/driver/edit_car_page.dart';
 import 'package:mobile/services/car_service.dart';
 import 'package:mobile/widgets/cards/car_card.dart';
 import 'package:mobile/widgets/dialogs/confirmation_dialog.dart';
@@ -16,6 +17,7 @@ class _CarsPageState extends State<CarsPage> {
   final carService = CarService();
   List<CarModel> cars = [];
   String? error;
+  bool _haveActiveCar = false;
 
   CarModel? createdCar;
 
@@ -38,6 +40,18 @@ class _CarsPageState extends State<CarsPage> {
       cars = [...retriveCars];
       error = errorText;
     });
+  }
+
+  void _onCardTap(int carId) async {
+    final updatedCar = await Navigator.of(context).push<CarModel?>(
+      MaterialPageRoute(builder: (_) => EditCarPage(carId: carId),),
+    );
+
+    if (updatedCar != null) {
+      setState(() {
+        cars[cars.indexWhere((c) => c.id == carId)] = updatedCar;
+      });
+    }
   }
 
   Future<void> onCreateNewCar() async {
@@ -102,6 +116,7 @@ class _CarsPageState extends State<CarsPage> {
                 },
                 child: CarCard(
                   car: cars[index],
+                  onCardTap: _onCardTap,
                 ),
               ),
             ),

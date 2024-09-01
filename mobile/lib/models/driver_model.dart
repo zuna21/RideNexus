@@ -142,7 +142,10 @@ class DriverAccountDetailsModel {
   String? username;
   String? fullName;
   double? price;
+  bool? hasPrice;
   double? rating;
+  String? location;
+  String? profilePhotoUrl;
   int? ratingCount;
   int? unseenChats;
 
@@ -152,6 +155,9 @@ class DriverAccountDetailsModel {
       this.fullName,
       this.price,
       this.rating,
+      this.hasPrice,
+      this.location,
+      this.profilePhotoUrl,
       this.ratingCount,
       this.unseenChats});
 
@@ -161,6 +167,9 @@ class DriverAccountDetailsModel {
     fullName = json['fullName'];
     price = double.parse(json['price'].toString());
     rating = double.parse(json['rating'].toString());
+    profilePhotoUrl = json['profilePhotoUrl'];
+    location = json['location'];
+    hasPrice = json['hasPrice'];
     ratingCount = json['ratingCount'];
     unseenChats = json['unseenChats'];
   }
@@ -172,6 +181,9 @@ class DriverAccountDetailsModel {
     data['fullName'] = fullName;
     data['price'] = price;
     data['rating'] = rating;
+    data['hasPrice'] = hasPrice;
+    data['profilePhotoUrl'] = profilePhotoUrl;
+    data['location'] = location;
     data['ratingCount'] = ratingCount;
     data['unseenChats'] = unseenChats;
     return data;

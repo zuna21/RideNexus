@@ -1,5 +1,3 @@
-using System;
-using API.DTOs;
 using API.Entities;
 using API.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -22,22 +20,6 @@ public class CarRepository(
         _dataContext.Cars.Remove(car);
     }
 
-    public async Task<List<CarDto>> GetAll(int driverId)
-    {
-        return await _dataContext.Cars
-            .Where(x => x.DriverId == driverId)
-            .Select(x => new CarDto
-            {
-                Id = x.Id,
-                CreatedAt = x.CreatedAt,
-                IsActive = x.IsActive,
-                Make = x.Make,
-                Model = x.Model,
-                RegistrationNumber = x.RegistrationNumber
-            })
-            .ToListAsync();
-    }
-
     public async Task<Car> FindById(int id)
     {
         return await _dataContext.Cars.FindAsync(id);
@@ -56,5 +38,12 @@ public class CarRepository(
                 .FirstOrDefault(car => car.IsActive)
             )
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Car>> GetAll(int driverId)
+    {
+        return await _dataContext.Cars
+            .Where(car => car.DriverId == driverId)
+            .ToListAsync();
     }
 }

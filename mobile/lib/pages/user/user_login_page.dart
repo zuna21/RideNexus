@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/client_model.dart';
-import 'package:mobile/pages/user/user_home_page.dart';
+import 'package:mobile/pages/driver/driver_permissions_page.dart';
 import 'package:mobile/services/client_service.dart';
 
 class UserLoginPage extends StatefulWidget {
@@ -30,12 +30,16 @@ class _UserLoginPageState extends State<UserLoginPage> {
     loginClient.username = _username.text;
     loginClient.password = _password.text;
 
-    try{
+    try {
       await _clientService.login(loginClient);
       if (mounted) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserHomePage(),),);
-      } 
-    } catch(e) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const DriverPermissionsPage(),
+          ),
+        );
+      }
+    } catch (e) {
       print(e.toString());
     }
   }
