@@ -17,7 +17,6 @@ class _CarsPageState extends State<CarsPage> {
   final carService = CarService();
   List<CarModel> cars = [];
   String? error;
-  bool _haveActiveCar = false;
 
   CarModel? createdCar;
 

@@ -6,6 +6,7 @@ using API.Repositories.DtoRepositories.Contracts;
 using API.Services.Contracts;
 using API.Utils.Contracts;
 using API.Entities.Enums;
+using API.DTOs.Params;
 
 namespace API.Services;
 
@@ -50,12 +51,12 @@ public class ChatService(
         return await _chatDtoRepository.GetClientChatByIds(client.Id, driverId); 
     }
 
-    public async Task<ChatDto> GetDriverChat(int chatId)
+    public async Task<ChatDto> GetDriverChat(int chatId, BasicParams basicParams)
     {
         var driver = await _userService.GetDriver();
         if (driver == null) return null;
 
-        return await _chatDtoRepository.GetById(chatId, driver.Id, CreatorType.Driver);
+        return await _chatDtoRepository.GetById(chatId, driver.Id, CreatorType.Driver, basicParams);
     }
 
     public async Task<List<ChatCardDto>> GetDriverChats()

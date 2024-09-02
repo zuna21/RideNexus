@@ -1,5 +1,6 @@
 using System;
 using API.DTOs;
+using API.DTOs.Params;
 using API.Entities.Enums;
 using API.Repositories.DtoRepositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public class ChatDtoRepository(
 {
     private readonly DataContext _dataContext = dataContext;
 
-    public async Task<ChatDto> GetById(int chatId, int searcherId, CreatorType creatorType)
+    public async Task<ChatDto> GetById(int chatId, int searcherId, CreatorType creatorType, BasicParams basicParams)
     {
         return await _dataContext.Chats
             .Where(chat => chat.Id == chatId)
@@ -20,6 +21,9 @@ public class ChatDtoRepository(
             {
                 Id = chat.Id,
                 Messages = chat.Messages
+                    .OrderByDescending(message => message.CreatedAt)
+                    .Skip(basicParams.PageIndex * basicParams.PageSize)
+                    .Take(basicParams.PageSize)
                     .Select(message => new MessageDto
                     {
                         Id = message.Id,

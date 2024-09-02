@@ -28,22 +28,21 @@ class ChatService {
     }
   }
 
-  Future<MessageModel> sendMessage(int chatId, CreateMessageModel createMessageModel) async {
+  Future<MessageModel> sendMessage(
+      int chatId, CreateMessageModel createMessageModel) async {
     // u zavisnosti od role samo url promijeni
     final role = await _userService.getRole();
     final url = role == "client"
-      ? Uri.http(AppConfig.baseUrl, "/api/chats/send-client/$chatId")
-      : Uri.http(AppConfig.baseUrl, "/api/chats/send-driver/$chatId");
+        ? Uri.http(AppConfig.baseUrl, "/api/chats/send-client/$chatId")
+        : Uri.http(AppConfig.baseUrl, "/api/chats/send-driver/$chatId");
     final token = await _userService.getToken();
 
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
-      body: json.encode(createMessageModel.toJson())
-    );
+    final response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: json.encode(createMessageModel.toJson()));
 
     if (response.statusCode == 200) {
       return MessageModel.fromJson(json.decode(response.body));
@@ -65,15 +64,22 @@ class ChatService {
     );
 
     if (response.statusCode == 200) {
-      return (json.decode(response.body) as List<dynamic>).map((e) => ChatCardModel.fromJson(e)).toList();
+      return (json.decode(response.body) as List<dynamic>)
+          .map((e) => ChatCardModel.fromJson(e))
+          .toList();
     } else {
       throw Exception("Failed to get chats");
     }
   }
 
-  Future<ChatModel> getChatById(int chatId) async {
+  Future<ChatModel> getChatById(int chatId, int pageIndex, int pageSize) async {
     // u zavisnosti od role promjenimo url;
-    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chat/$chatId");
+    final queryParams = {
+      "pageSize": pageSize.toString(),
+      "pageIndex": pageIndex.toString()
+    };
+    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chat/$chatId", queryParams);
+    
     final token = await _userService.getToken();
 
     final response = await http.get(

@@ -1,4 +1,5 @@
 using API.DTOs;
+using API.DTOs.Params;
 using API.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,9 +47,9 @@ namespace API.Controllers
         }
 
         [HttpGet("driver-chat/{chatId}")]
-        public async Task<ActionResult<ChatDto>> GetDriverChat(int chatId)
+        public async Task<ActionResult<ChatDto>> GetDriverChat(int chatId, [FromQuery] BasicParams basicParams)
         {
-            var chat = await _chatService.GetDriverChat(chatId);
+            var chat = await _chatService.GetDriverChat(chatId, basicParams);
             if (chat == null) return BadRequest("Failed to get chat.");
             return chat;
         }

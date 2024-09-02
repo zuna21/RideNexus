@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/app_config.dart';
 import 'package:mobile/models/chat_model.dart';
 import 'package:mobile/models/message_model.dart';
 import 'package:mobile/services/chat_service.dart';
@@ -20,21 +21,32 @@ class _ChatPageState extends State<ChatPage> {
   final _chatService = ChatService();
   final _messageController = TextEditingController();
   final _userService = UserService();
+  final _scrollController = ScrollController();
   ChatModel? _chat;
   bool asDriver = false;
+  int pageIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _doesDriverOpenPage();
-    getChat();
+    getChat(pageIndex);
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (!isTop) {
+          getChat(pageIndex);
+        }
+      }
+    });
   }
 
-  Future<void> getChat() async {
+  Future<void> getChat(int pageIndex) async {
     if (widget.driverId != null) {
       getClientChatByIds();
     } else if (widget.chatId != null) {
-      getChatByid();
+      getChatByid(pageIndex);
     }
   }
 
@@ -61,16 +73,24 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Future<void> getChatByid() async {
+  Future<void> getChatByid(int pageIndex) async {
     ChatModel? chat;
     try {
-      chat = await _chatService.getChatById(widget.chatId!);
+      chat = await _chatService.getChatById(
+          widget.chatId!, pageIndex, AppConfig.pageSize);
+      this.pageIndex++;
     } catch (e) {
       print(e);
     }
 
+    if (chat == null) return;
     setState(() {
-      _chat = chat;
+      if (pageIndex == 0) {
+        _chat = chat;
+      } else {
+        _chat!.messages = [..._chat!.messages!, ...chat!.messages!];
+      }
+
     });
   }
 
@@ -94,14 +114,13 @@ class _ChatPageState extends State<ChatPage> {
     if (createdMessage != null) {
       _messageController.clear();
       setState(() {
-        _chat!.messages = [..._chat!.messages!, createdMessage!];
+        _chat!.messages = [createdMessage!, ..._chat!.messages!];
       });
     }
   }
 
   void scheduleARide() async {
     if (widget.driverId == null) {
-      print("Nemas id od drivera");
       return;
     }
     final isRideCreated = await showDialog(
@@ -133,6 +152,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -148,6 +168,8 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
                     itemCount: _chat!.messages!.length,
                     itemBuilder: (itemBuilder, index) => Message(
                       message: _chat!.messages![index],
