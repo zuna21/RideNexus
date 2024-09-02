@@ -98,7 +98,7 @@ class DriverCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    driver.car!,
+                    driver.car ?? "Nema auto",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text("Cijena: ${driver.price} KM/km"),

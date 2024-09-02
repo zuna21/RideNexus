@@ -76,10 +76,10 @@ class ChatService {
     }
   }
 
-  Future<ChatModel> getChatById(int chatId, int pageIndex, int pageSize) async {
+  Future<ChatModel> getChatById(int chatId, int pageIndex) async {
     // u zavisnosti od role promjenimo url;
     final queryParams = {
-      "pageSize": pageSize.toString(),
+      "pageSize": AppConfig.pageSize.toString(),
       "pageIndex": pageIndex.toString()
     };
     final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chat/$chatId", queryParams);

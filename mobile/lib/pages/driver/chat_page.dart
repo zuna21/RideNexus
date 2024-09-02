@@ -24,29 +24,30 @@ class _ChatPageState extends State<ChatPage> {
   final _scrollController = ScrollController();
   ChatModel? _chat;
   bool asDriver = false;
-  int pageIndex = 0;
+  int _pageIndex = 0;
+  bool _haveMore = true;
 
   @override
   void initState() {
     super.initState();
     _doesDriverOpenPage();
-    getChat(pageIndex);
+    getChat();
 
     _scrollController.addListener(() {
       if (_scrollController.position.atEdge) {
         bool isTop = _scrollController.position.pixels == 0;
         if (!isTop) {
-          getChat(pageIndex);
+          getChat();
         }
       }
     });
   }
 
-  Future<void> getChat(int pageIndex) async {
+  void getChat() async {
     if (widget.driverId != null) {
-      getClientChatByIds(pageIndex);
+      getClientChatByIds();
     } else if (widget.chatId != null) {
-      getChatByid(pageIndex);
+      getChatByid();
     }
   }
 
@@ -58,39 +59,43 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Ova funkcija je ako se proslijedi driverId (tj. ako user otvori chat kroz vozaca)
-  Future<void> getClientChatByIds(int pageIndex) async {
+  void getClientChatByIds() async {
+    if (!_haveMore) return;
     ChatModel? chat;
     try {
-      chat = await _chatService.getClientChatByIds(widget.driverId!, pageIndex);
-      this.pageIndex++;
+      chat =
+          await _chatService.getClientChatByIds(widget.driverId!, _pageIndex);
+      _pageIndex++;
+      if (chat.messages!.length < AppConfig.pageSize) _haveMore = false;
     } catch (e) {
       print(e.toString());
     }
 
     if (chat != null) {
       setState(() {
-        if (pageIndex == 0) {
-        _chat = chat;
-      } else {
-        _chat!.messages = [..._chat!.messages!, ...chat!.messages!];
-      }
+        if (_pageIndex == 1) {
+          _chat = chat;
+        } else {
+          _chat!.messages = [..._chat!.messages!, ...chat!.messages!];
+        }
       });
     }
   }
 
-  Future<void> getChatByid(int pageIndex) async {
+  Future<void> getChatByid() async {
+    if (!_haveMore) return;
     ChatModel? chat;
     try {
-      chat = await _chatService.getChatById(
-          widget.chatId!, pageIndex, AppConfig.pageSize);
-      this.pageIndex++;
+      chat = await _chatService.getChatById(widget.chatId!, _pageIndex);
+      _pageIndex++;
+      if (chat.messages!.length < AppConfig.pageSize) _haveMore = false;
     } catch (e) {
       print(e);
     }
 
     if (chat == null) return;
     setState(() {
-      if (pageIndex == 0) {
+      if (_pageIndex == 1) {
         _chat = chat;
       } else {
         _chat!.messages = [..._chat!.messages!, ...chat!.messages!];

@@ -20,19 +20,52 @@ class _UserHomePageState extends State<UserHomePage> {
   final _clientService = ClientService();
   final _driverService = DriverService();
   final _firebaseMessagingService = FirebaseMessagingService();
+  final _searchController = TextEditingController();
   List<DriverCardModel> _drivers = [];
   StreamSubscription<RemoteMessage>? _notificationStream;
+  int _pageIndex = 0;
+  bool _haveMore = true;
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    getAll();
+    _fetchData();
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        bool isTop = _scrollController.position.pixels == 0;
+        if (!isTop) {
+          _fetchData();
+        }
+      }
+    });
     _firebaseMessagingService.updateFirebaseMessageToken();
     _receiveMessage();
   }
 
   void _receiveMessage() {
     _notificationStream = _firebaseMessagingService.receiveMessage(context);
+  }
+
+  void _fetchData() async {
+    if (!_haveMore) return;
+    List<DriverCardModel> drivers = [];
+    try {
+      drivers =
+          await _driverService.getAll(44.727549, 18.090244, _pageIndex, 10);
+      _pageIndex++;
+      if (drivers.length < 3) _haveMore = false;
+    } catch (e) {
+      print(
+        e.toString(),
+      );
+    }
+
+    if (drivers.isNotEmpty) {
+      setState(() {
+        _drivers = [..._drivers, ...drivers];
+      });
+    }
   }
 
   void onLogout() async {
@@ -47,22 +80,15 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
-  Future<void> getAll() async {
-    List<DriverCardModel> drivers = [];
-    try {
-      drivers = await _driverService.getAll();
-    } catch (e) {
-      print(e.toString());
-    }
-
-    setState(() {
-      _drivers = [...drivers];
-    });
+  void _onSearch() {
+    if (_searchController.text.trim().isEmpty) return;
+    print(_searchController.text);
   }
 
   @override
   void dispose() {
     _notificationStream?.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -82,11 +108,36 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
           ],
         ),
-        body: ListView.builder(
-          itemCount: _drivers.length,
-          itemBuilder: (itemBuilder, index) => DriverCard(
-            driver: _drivers[index],
+        body: Column(
+          children: [
+          Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(onPressed: _onSearch, icon: const Icon(Icons.search_outlined),),
+                      suffixIconColor: Theme.of(context).colorScheme.primary,
+                      border: const OutlineInputBorder(),
+                      hintText: 'Potražite vozača po imenu',
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _drivers.length,
+                itemBuilder: (itemBuilder, index) => DriverCard(
+                  driver: _drivers[index],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

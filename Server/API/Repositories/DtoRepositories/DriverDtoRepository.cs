@@ -1,5 +1,7 @@
 using System;
+using API.DTOs.Params;
 using API.Repositories.DtoRepositories.Contracts;
+using HaversineFormula;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories.DtoRepositories;
@@ -40,7 +42,7 @@ public class DriverDtoRepository(
                 UnseenChats = driver.Chats
                     .Where(chat => chat.IsSeenDriver == false)
                     .Count(),
-                Rating = driver.Reviews.Count == 0 
+                Rating = driver.Reviews.Count == 0
                     ? 5
                     : driver.Reviews.Average(review => review.Rating),
                 RatingCount = driver.Reviews.Count,
@@ -66,9 +68,19 @@ public class DriverDtoRepository(
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<DriverCardDto>> GetAll()
+    public async Task<List<DriverCardDto>> GetAll(DriversParams driversParams)
     {
+
         return await _dataContext.Drivers
+            .OrderBy(r => 6371 * 2 * Math.Asin(
+                    Math.Sqrt(
+                    Math.Pow(Math.Sin((driversParams.Latitude - r.Latitude) * Math.PI / 180 / 2), 2) +
+                    Math.Cos(driversParams.Latitude * Math.PI / 180) * Math.Cos(r.Latitude * Math.PI / 180) *
+                    Math.Pow(Math.Sin((driversParams.Longitude - r.Longitude) * Math.PI / 180 / 2), 2)
+                    )
+                ))
+            .Skip(driversParams.PageIndex * driversParams.PageSize)
+            .Take(driversParams.PageSize)
             .Select(driver => new DriverCardDto
             {
                 Id = driver.Id,
@@ -114,4 +126,18 @@ public class DriverDtoRepository(
             })
             .FirstOrDefaultAsync();
     }
+
+    // inputs assumed to be in radians
+    private static double Haversine(double lat1, double lat2, double lon1, double lon2)
+    {
+        const double r = 6378100; // meters
+
+        var sdlat = Math.Sin((lat2 - lat1) / 2);
+        var sdlon = Math.Sin((lon2 - lon1) / 2);
+        var q = sdlat * sdlat + Math.Cos(lat1) * Math.Cos(lat2) * sdlon * sdlon;
+        var d = 2 * r * Math.Asin(Math.Sqrt(q));
+
+        return d;
+    }
+
 }

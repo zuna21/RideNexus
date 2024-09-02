@@ -3,6 +3,7 @@ namespace API;
 
 using System.Collections.Generic;
 using API.DTOs;
+using API.DTOs.Params;
 using API.Repositories.DtoRepositories.Contracts;
 using API.Utils.Contracts;
 using Microsoft.AspNetCore.Identity;
@@ -41,9 +42,9 @@ public class DriverService(
         return await _driverDtoRepository.GetAccountMainDetails(driver.Id);
     }
 
-    public async Task<List<DriverCardDto>> GetAllCards()
+    public async Task<List<DriverCardDto>> GetAllCards(DriversParams driversParams)
     {
-        return await _driverDtoRepository.GetAll();
+        return await _driverDtoRepository.GetAll(driversParams);
     }
 
     public async Task<DriverDetailsDto> GetDetails(int driverId)
@@ -69,6 +70,11 @@ public class DriverService(
         Driver driver = DriverMapper.RegisterDriverDtoToDriver(registerDriverDto);
         driver.Password = PasswordManager.HashDriverPassword(driver, registerDriverDto.Password);
         driver.Username = driver.Username.ToLower();
+
+        // Obrisi
+        driver.Latitude = 44.728749;
+        driver.Longitude = 18.091815;
+        driver.Location = "Dzungla";
         
         _driverRepository.Register(driver);
         if (!await _driverRepository.SaveAllAsync())

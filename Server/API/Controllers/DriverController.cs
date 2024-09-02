@@ -1,4 +1,5 @@
 ﻿using API.DTOs;
+using API.DTOs.Params;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,9 +33,9 @@ public class DriverController(
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<List<DriverCardDto>>> GetAll()
+    public async Task<ActionResult<List<DriverCardDto>>> GetAll([FromQuery] DriversParams driversParams)
     {
-        var drivers = await _driverService.GetAllCards();
+        var drivers = await _driverService.GetAllCards(driversParams);
         return Ok(drivers);
     }
 
