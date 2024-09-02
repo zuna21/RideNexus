@@ -24,7 +24,7 @@ public class ChatService(
     private readonly IChatDtoRepository _chatDtoRepository = chatDtoRepository;
     private readonly IMessageRepository _messageRepository = messageRepository;
 
-    public async Task<ChatDto> GetClientChatByIds(int driverId)
+    public async Task<ChatDto> GetClientChatByIds(int driverId, BasicParams basicParams)
     {
         var client = await _userService.GetClient();
         if (client == null) return null;
@@ -48,7 +48,7 @@ public class ChatService(
             if (!await _chatRepository.SaveAllAsync()) return null;
         }        
 
-        return await _chatDtoRepository.GetClientChatByIds(client.Id, driverId); 
+        return await _chatDtoRepository.GetClientChatByIds(client.Id, driverId, basicParams); 
     }
 
     public async Task<ChatDto> GetDriverChat(int chatId, BasicParams basicParams)

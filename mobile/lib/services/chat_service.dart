@@ -9,8 +9,12 @@ import 'package:mobile/user_service.dart';
 class ChatService {
   final _userService = UserService();
 
-  Future<ChatModel> getClientChatByIds(int driverId) async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/chats/$driverId");
+  Future<ChatModel> getClientChatByIds(int driverId, int pageIndex) async {
+    final queryParams = {
+      "pageIndex": pageIndex.toString(),
+      "pageSize": AppConfig.pageSize.toString()
+    };
+    final url = Uri.http(AppConfig.baseUrl, "/api/chats/$driverId", queryParams);
     final token = await _userService.getToken();
 
     final response = await http.get(

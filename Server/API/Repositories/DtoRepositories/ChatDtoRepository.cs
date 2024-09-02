@@ -37,7 +37,7 @@ public class ChatDtoRepository(
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ChatDto> GetClientChatByIds(int clientId, int driverId)
+    public async Task<ChatDto> GetClientChatByIds(int clientId, int driverId, BasicParams basicParams)
     {
         return await _dataContext.Chats
             .Where(chat => chat.ClientId == clientId && chat.DriverId == driverId)
@@ -45,6 +45,9 @@ public class ChatDtoRepository(
             {
                 Id = chat.Id,
                 Messages = chat.Messages
+                    .OrderByDescending(m => m.CreatedAt)
+                    .Skip(basicParams.PageSize * basicParams.PageIndex)
+                    .Take(basicParams.PageSize)
                     .Select(message => new MessageDto
                     {
                         Id = message.Id,

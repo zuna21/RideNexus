@@ -44,7 +44,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> getChat(int pageIndex) async {
     if (widget.driverId != null) {
-      getClientChatByIds();
+      getClientChatByIds(pageIndex);
     } else if (widget.chatId != null) {
       getChatByid(pageIndex);
     }
@@ -58,17 +58,22 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Ova funkcija je ako se proslijedi driverId (tj. ako user otvori chat kroz vozaca)
-  Future<void> getClientChatByIds() async {
+  Future<void> getClientChatByIds(int pageIndex) async {
     ChatModel? chat;
     try {
-      chat = await _chatService.getClientChatByIds(widget.driverId!);
+      chat = await _chatService.getClientChatByIds(widget.driverId!, pageIndex);
+      this.pageIndex++;
     } catch (e) {
       print(e.toString());
     }
 
     if (chat != null) {
       setState(() {
+        if (pageIndex == 0) {
         _chat = chat;
+      } else {
+        _chat!.messages = [..._chat!.messages!, ...chat!.messages!];
+      }
       });
     }
   }
@@ -90,7 +95,6 @@ class _ChatPageState extends State<ChatPage> {
       } else {
         _chat!.messages = [..._chat!.messages!, ...chat!.messages!];
       }
-
     });
   }
 

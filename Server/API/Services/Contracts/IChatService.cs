@@ -6,7 +6,7 @@ namespace API.Services.Contracts;
 
 public interface IChatService
 {
-    Task<ChatDto> GetClientChatByIds(int driverId);
+    Task<ChatDto> GetClientChatByIds(int driverId, BasicParams basicParams);
     Task<MessageDto> SendMessageClient(int chatId, CreateMessageDto createMessageDto);
     Task<MessageDto> SendMessageDriver(int chatId, CreateMessageDto createMessageDto);
     Task<List<ChatCardDto>> GetDriverChats();

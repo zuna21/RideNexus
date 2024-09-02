@@ -14,9 +14,9 @@ namespace API.Controllers
         private readonly IChatService _chatService = chatService;
 
         [HttpGet("{driverId}")]
-        public async Task<ActionResult<ChatDto>> GetClientChatByIds(int driverId)
+        public async Task<ActionResult<ChatDto>> GetClientChatByIds(int driverId, [FromQuery] BasicParams basicParams)
         {
-            var chat = await _chatService.GetClientChatByIds(driverId);
+            var chat = await _chatService.GetClientChatByIds(driverId, basicParams);
             if (chat == null) return BadRequest("Failed to get chat");
             return chat;
         }
