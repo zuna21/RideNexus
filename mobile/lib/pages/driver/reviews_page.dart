@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/fetch_status.dart';
 import 'package:mobile/models/review_model.dart';
+import 'package:mobile/pages/error_page.dart';
 import 'package:mobile/services/review_service.dart';
 import 'package:mobile/widgets/cards/review_card.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/rating.dart';
 
 class ReviewsPage extends StatefulWidget {
@@ -14,6 +17,7 @@ class ReviewsPage extends StatefulWidget {
 }
 
 class _ReviewsPageState extends State<ReviewsPage> {
+  FetchStatus _fetchStatus = FetchStatus.loading;
   final _reviewService = ReviewService();
   ReviewDetailsModel? _review;
 
@@ -23,18 +27,17 @@ class _ReviewsPageState extends State<ReviewsPage> {
     getReviewDetails();
   }
 
-  Future<void> getReviewDetails() async {
+  void getReviewDetails() async {
     ReviewDetailsModel? review;
     try {
       review = await _reviewService.getReviewDetails(widget.driverId);
-      print(review);
-    } catch (e) {
-      print(e);
-    }
-
-    if (review != null) {
       setState(() {
         _review = review;
+        _fetchStatus = FetchStatus.data;
+      });
+    } catch (e) {
+      setState(() {
+        _fetchStatus = FetchStatus.error;
       });
     }
   }
@@ -46,8 +49,19 @@ class _ReviewsPageState extends State<ReviewsPage> {
         title: const Text("Recenzije"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: _review != null
-          ? Padding(
+      body: _build()
+    );
+  }
+
+
+  Widget _build() {
+    switch (_fetchStatus) {
+      case FetchStatus.loading:
+        return const Loading();
+      case FetchStatus.error:
+        return const ErrorPage();
+      default:
+        return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
                 children: [
@@ -81,10 +95,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
                   ),
                 ],
               ),
-          )
-          : const Center(
-              child: Text("You don't have any review"),
-            ),
-    );
+          );
+    }
   }
 }

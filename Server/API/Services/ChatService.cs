@@ -59,12 +59,12 @@ public class ChatService(
         return await _chatDtoRepository.GetById(chatId, driver.Id, CreatorType.Driver, basicParams);
     }
 
-    public async Task<List<ChatCardDto>> GetDriverChats()
+    public async Task<List<ChatCardDto>> GetDriverChats(BasicParams basicParams)
     {
         var driver = await _userService.GetDriver();
         if (driver == null ) return null;
 
-        return await _chatDtoRepository.GetDriverChats(driver.Id);
+        return await _chatDtoRepository.GetDriverChats(driver.Id, basicParams);
     }
 
     public async Task<MessageDto> SendMessageClient(int chatId, CreateMessageDto createMessageDto)

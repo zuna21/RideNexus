@@ -38,9 +38,9 @@ namespace API.Controllers
         }
 
         [HttpGet("driver-chats")]
-        public async Task<ActionResult<List<ChatCardDto>>> GetDriverChats()
+        public async Task<ActionResult<List<ChatCardDto>>> GetDriverChats([FromQuery] BasicParams basicParams)
         {
-            var chats = await _chatService.GetDriverChats();
+            var chats = await _chatService.GetDriverChats(basicParams);
             if (chats == null) return BadRequest("Failed to get chats");
 
             return Ok(chats);

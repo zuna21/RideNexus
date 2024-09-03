@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_config.dart';
+import 'package:mobile/helpers/fetch_status.dart';
 import 'package:mobile/helpers/firebase_messaging_service.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/cars_page.dart';
@@ -10,9 +11,11 @@ import 'package:mobile/pages/driver/driver_basic_account_details.dart';
 import 'package:mobile/pages/driver/messages_page.dart';
 import 'package:mobile/pages/driver/reviews_page.dart';
 import 'package:mobile/pages/driver/rides_page.dart';
+import 'package:mobile/pages/error_page.dart';
 import 'package:mobile/pages/selection_page.dart';
 import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/big_select_button.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/location_chip.dart';
 import 'package:mobile/widgets/rating.dart';
 
@@ -28,6 +31,7 @@ class DriverHomePage extends StatefulWidget {
 class _DriverHomePageState extends State<DriverHomePage> {
   final _driverService = DriverService();
   final _firebaseMessagingService = FirebaseMessagingService();
+  FetchStatus _fetchStatus = FetchStatus.loading;
   DriverAccountDetailsModel? _driver;
   PopupMenuItemValue? selectedItem;
   StreamSubscription<RemoteMessage>? _receiveMessageStream;
@@ -48,13 +52,13 @@ class _DriverHomePageState extends State<DriverHomePage> {
     DriverAccountDetailsModel? driver;
     try {
       driver = await _driverService.GetAccountDetails();
-    } catch (e) {
-      print(e);
-    }
-
-    if (driver != null) {
       setState(() {
         _driver = driver;
+        _fetchStatus = FetchStatus.data;
+      });
+    } catch (e) {
+      setState(() {
+        _fetchStatus = FetchStatus.error;
       });
     }
   }
@@ -112,8 +116,20 @@ class _DriverHomePageState extends State<DriverHomePage> {
             )
           ],
         ),
-        body: _driver != null
-            ? SingleChildScrollView(
+        body: _build()
+      ),
+    );
+  }
+
+
+  Widget _build() {
+    switch (_fetchStatus) {
+      case FetchStatus.loading:
+        return const Loading();
+      case FetchStatus.error:
+        return const ErrorPage();
+      default:
+        return SingleChildScrollView(
                 child: Column(
                   children: [
                     Stack(
@@ -302,11 +318,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
                     ),
                   ],
                 ),
-              )
-            : const Center(
-                child: Text("Failed to get account details."),
-              ),
-      ),
-    );
+              );
+    }
   }
 }

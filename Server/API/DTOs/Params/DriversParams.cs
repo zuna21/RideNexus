@@ -7,4 +7,5 @@ public class DriversParams : BasicParams
 {
     public double Latitude { get; set; } = 44.727549;
     public double Longitude { get; set; } = 18.090244;
+    public string Search { get; set; } = "";
 }

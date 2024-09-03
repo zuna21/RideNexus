@@ -60,10 +60,12 @@ public class ChatDtoRepository(
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<ChatCardDto>> GetDriverChats(int driverId)
+    public async Task<List<ChatCardDto>> GetDriverChats(int driverId, BasicParams basicParams)
     {
         return await _dataContext.Chats
             .Where(chat => chat.DriverId == driverId)
+            .Skip(basicParams.PageIndex * basicParams.PageSize)
+            .Take(basicParams.PageSize)
             .Select(chat => new ChatCardDto
             {
                 Id = chat.Id,

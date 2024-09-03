@@ -9,6 +9,6 @@ public interface IChatService
     Task<ChatDto> GetClientChatByIds(int driverId, BasicParams basicParams);
     Task<MessageDto> SendMessageClient(int chatId, CreateMessageDto createMessageDto);
     Task<MessageDto> SendMessageDriver(int chatId, CreateMessageDto createMessageDto);
-    Task<List<ChatCardDto>> GetDriverChats();
+    Task<List<ChatCardDto>> GetDriverChats(BasicParams basicParams);
     Task<ChatDto> GetDriverChat(int chatId, BasicParams basicParams);
 }

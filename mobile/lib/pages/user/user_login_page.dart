@@ -17,6 +17,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
   final _password = TextEditingController();
   final _clientService = ClientService();
 
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _username.dispose();
@@ -31,6 +33,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
     loginClient.password = _password.text;
 
     try {
+      setState(() {
+        _isLoading = true;
+      });
       await _clientService.login(loginClient);
       if (mounted) {
         Navigator.of(context).push(
@@ -40,6 +45,16 @@ class _UserLoginPageState extends State<UserLoginPage> {
         );
       }
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Korisničko ime ili lozinka nisu tačni"),
+          ),
+        );
+      }
       print(e.toString());
     }
   }
@@ -141,17 +156,23 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(40),
-                      backgroundColor:
-                          Theme.of(context).colorScheme.tertiaryContainer,
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onTertiaryContainer,
-                    ),
-                    onPressed: login,
-                    child: const Text("Prijavi se"),
-                  ),
+                  _isLoading
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [CircularProgressIndicator()],
+                        )
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(40),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.tertiaryContainer,
+                            foregroundColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
+                          ),
+                          onPressed: login,
+                          child: const Text("Prijavi se"),
+                        ),
                 ],
               ),
             ),

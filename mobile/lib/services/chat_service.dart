@@ -55,16 +55,21 @@ class ChatService {
     }
   }
 
-  Future<List<ChatCardModel>> getDriverChats() async {
-    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chats");
+  Future<List<ChatCardModel>> getDriverChats({int? pageIndex, int? pageSize}) async {
+    final queryParams = {
+      if (pageIndex != null) "pageIndex": pageIndex.toString(),
+      if (pageSize != null) "pageSize": pageSize.toString()
+    };
+    final url = Uri.http(AppConfig.baseUrl, "/api/chats/driver-chats", queryParams);
     final token = await _userService.getToken();
+
+    if (token == null) {
+      throw Exception("Failed to get token");
+    }
 
     final response = await http.get(
       url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
+      headers: AppConfig.getAuthHeaders(token),
     );
 
     if (response.statusCode == 200) {

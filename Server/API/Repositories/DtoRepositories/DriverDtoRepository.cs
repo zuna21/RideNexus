@@ -72,6 +72,8 @@ public class DriverDtoRepository(
     {
 
         return await _dataContext.Drivers
+            .Where(driver => driver.LastName.ToLower().Contains(driversParams.Search.ToLower()) 
+                || driver.FirstName.ToLower().Contains(driversParams.Search.ToLower()))
             .OrderBy(r => 6371 * 2 * Math.Asin(
                     Math.Sqrt(
                     Math.Pow(Math.Sin((driversParams.Latitude - r.Latitude) * Math.PI / 180 / 2), 2) +

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/fetch_status.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/driver_login_page.dart';
+import 'package:mobile/pages/error_page.dart';
 import 'package:mobile/services/driver_service.dart';
+import 'package:mobile/widgets/loading.dart';
 
 class DriverUsernamePasswordPage extends StatefulWidget {
   const DriverUsernamePasswordPage({super.key});
@@ -14,7 +17,6 @@ class DriverUsernamePasswordPage extends StatefulWidget {
 class _DriverUsernamePasswordPageState
     extends State<DriverUsernamePasswordPage> {
   final _driverService = DriverService();
-  bool _getDetails = false;
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _oldPasswordController = TextEditingController();
@@ -22,6 +24,7 @@ class _DriverUsernamePasswordPageState
   final _repeatNewPasswordController = TextEditingController();
   bool _changePassword = false;
   bool _isFormChanged = false;
+  FetchStatus _fetchStatus = FetchStatus.loading;
 
   @override
   void initState() {
@@ -34,10 +37,12 @@ class _DriverUsernamePasswordPageState
       final response = await _driverService.getMainAccountDetails();
       setState(() {
         _usernameController.text = response.username!;
-        _getDetails = true;
+        _fetchStatus = FetchStatus.data;
       });
     } catch (e) {
-      print(e.toString());
+      setState(() {
+        _fetchStatus = FetchStatus.error;
+      });
     }
   }
 
@@ -84,157 +89,159 @@ class _DriverUsernamePasswordPageState
         foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         title: const Text("Korisničko ime i lozinka"),
       ),
-      body: _getDetails
-          ? SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                vertical: 15,
-                horizontal: 8.0,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _usernameController,
-                      onChanged: (value) {
-                        setState(() {
-                          _isFormChanged = true;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Korisničko ime',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Molimo unesite korisničko ime';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text("Želite li promijeniti lozinku?"),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: RadioListTile<bool>(
-                            title: const Text('Da'),
-                            value: true,
-                            groupValue: _changePassword,
-                            onChanged: (value) {
-                              setState(() {
-                                _changePassword = value!;
-                              });
-                            },
-                          ),
-                        ),
-                        Flexible(
-                          child: RadioListTile<bool>(
-                            title: const Text('Ne'),
-                            value: false,
-                            groupValue: _changePassword,
-                            onChanged: (value) {
-                              setState(() {
-                                _changePassword = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextFormField(
-                      controller: _oldPasswordController,
-                      readOnly: !_changePassword,
-                      onChanged: (value) {
-                        setState(() {
-                          _isFormChanged = false;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Stara lozinka',
-                      ),
-                      validator: (value) {
-                        if (_changePassword &&
-                            (value == null || value.isEmpty)) {
-                          return 'Molimo unesite staru lozinku';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFormField(
-                      controller: _newPasswordController,
-                      readOnly: !_changePassword,
-                      onChanged: (value) {
-                        setState(() {
-                          _changePassword = true;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Nova lozinka',
-                      ),
-                      validator: (value) {
-                        if (_changePassword &&
-                            (value == null || value.isEmpty)) {
-                          return 'Molimo unesite novu lozinku';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFormField(
-                      controller: _repeatNewPasswordController,
-                      readOnly: !_changePassword,
-                      onChanged: (value) {
-                        setState(() {
-                          _changePassword = true;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Ponovite novu lozinku',
-                      ),
-                      validator: (value) {
-                        if ((_changePassword &&
-                                (value == null || value.isEmpty)) ||
-                            (_changePassword &&
-                                (value != _newPasswordController.text))) {
-                          return 'Molimo ponovite tačno novu lozinku';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    ElevatedButton(
-                      onPressed: _isFormChanged
-                      ? _onSubmit
-                      : null,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onTertiaryContainer,
-                      ),
-                      child: const Text("Ažurirajte"),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : const Center(
-              child: Text("Sacekajte..."),
-            ),
+      body: _build()
     );
+  }
+
+  Widget _build() {
+    switch (_fetchStatus) {
+      case FetchStatus.loading:
+        return const Loading();
+      case FetchStatus.error:
+        return const ErrorPage();
+      default:
+        return SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          vertical: 15,
+          horizontal: 8.0,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                onChanged: (value) {
+                  setState(() {
+                    _isFormChanged = true;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Korisničko ime',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Molimo unesite korisničko ime';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const Text("Želite li promijeniti lozinku?"),
+              Row(
+                children: [
+                  Flexible(
+                    child: RadioListTile<bool>(
+                      title: const Text('Da'),
+                      value: true,
+                      groupValue: _changePassword,
+                      onChanged: (value) {
+                        setState(() {
+                          _changePassword = value!;
+                        });
+                      },
+                    ),
+                  ),
+                  Flexible(
+                    child: RadioListTile<bool>(
+                      title: const Text('Ne'),
+                      value: false,
+                      groupValue: _changePassword,
+                      onChanged: (value) {
+                        setState(() {
+                          _changePassword = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              TextFormField(
+                controller: _oldPasswordController,
+                readOnly: !_changePassword,
+                onChanged: (value) {
+                  setState(() {
+                    _isFormChanged = false;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Stara lozinka',
+                ),
+                validator: (value) {
+                  if (_changePassword && (value == null || value.isEmpty)) {
+                    return 'Molimo unesite staru lozinku';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: _newPasswordController,
+                readOnly: !_changePassword,
+                onChanged: (value) {
+                  setState(() {
+                    _changePassword = true;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nova lozinka',
+                ),
+                validator: (value) {
+                  if (_changePassword && (value == null || value.isEmpty)) {
+                    return 'Molimo unesite novu lozinku';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: _repeatNewPasswordController,
+                readOnly: !_changePassword,
+                onChanged: (value) {
+                  setState(() {
+                    _changePassword = true;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Ponovite novu lozinku',
+                ),
+                validator: (value) {
+                  if ((_changePassword && (value == null || value.isEmpty)) ||
+                      (_changePassword &&
+                          (value != _newPasswordController.text))) {
+                    return 'Molimo ponovite tačno novu lozinku';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              ElevatedButton(
+                onPressed: _isFormChanged ? _onSubmit : null,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(40),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.tertiaryContainer,
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onTertiaryContainer,
+                ),
+                child: const Text("Ažurirajte"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

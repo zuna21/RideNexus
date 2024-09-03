@@ -2,12 +2,16 @@ import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/app_config.dart';
+import 'package:mobile/helpers/fetch_status.dart';
 import 'package:mobile/helpers/firebase_messaging_service.dart';
 import 'package:mobile/models/driver_model.dart';
+import 'package:mobile/pages/error_page.dart';
 import 'package:mobile/pages/selection_page.dart';
 import 'package:mobile/services/client_service.dart';
 import 'package:mobile/services/driver_service.dart';
 import 'package:mobile/widgets/cards/driver_card.dart';
+import 'package:mobile/widgets/loading.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -17,15 +21,15 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
+  FetchStatus _fetchStatus = FetchStatus.loading;
   final _clientService = ClientService();
   final _driverService = DriverService();
   final _firebaseMessagingService = FirebaseMessagingService();
-  final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
   List<DriverCardModel> _drivers = [];
   StreamSubscription<RemoteMessage>? _notificationStream;
   int _pageIndex = 0;
   bool _haveMore = true;
-  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -52,20 +56,22 @@ class _UserHomePageState extends State<UserHomePage> {
     List<DriverCardModel> drivers = [];
     try {
       drivers =
-          await _driverService.getAll(44.727549, 18.090244, _pageIndex, 10);
+          await _driverService.getAll(pageIndex: _pageIndex);
       _pageIndex++;
-      if (drivers.length < 3) _haveMore = false;
+      if (drivers.length < AppConfig.pageSize) _haveMore = false;
     } catch (e) {
+      setState(() {
+        _fetchStatus = FetchStatus.error;
+      });
       print(
         e.toString(),
       );
     }
 
-    if (drivers.isNotEmpty) {
-      setState(() {
-        _drivers = [..._drivers, ...drivers];
-      });
-    }
+    setState(() {
+      _drivers = [..._drivers, ...drivers];
+      _fetchStatus = FetchStatus.data;
+    });
   }
 
   void onLogout() async {
@@ -80,10 +86,6 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
-  void _onSearch() {
-    if (_searchController.text.trim().isEmpty) return;
-    print(_searchController.text);
-  }
 
   @override
   void dispose() {
@@ -108,26 +110,42 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
           ],
         ),
-        body: Column(
+        body: _buildBody(),
+      ),
+    );
+  }
+
+
+  Widget _buildBody() {
+    switch (_fetchStatus) {
+      case FetchStatus.loading:
+        return const Loading();
+      case FetchStatus.error:
+        return const ErrorPage();
+      default:
+        return Column(
           children: [
-          Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(onPressed: _onSearch, icon: const Icon(Icons.search_outlined),),
-                      suffixIconColor: Theme.of(context).colorScheme.primary,
-                      border: const OutlineInputBorder(),
-                      hintText: 'Potražite vozača po imenu',
+            /* Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: _onSearch,
+                          icon: const Icon(Icons.search_outlined),
+                        ),
+                        suffixIconColor: Theme.of(context).colorScheme.primary,
+                        border: const OutlineInputBorder(),
+                        hintText: 'Potražite vozača po imenu',
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            ), */
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
@@ -138,8 +156,7 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
+        );
+    }
   }
 }

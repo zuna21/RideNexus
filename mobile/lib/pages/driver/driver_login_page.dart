@@ -16,16 +16,19 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _driverService = DriverService();
+  final driverLogin = LoginDriverModel();
 
   bool _hidePassword = true;
-  final driverLogin = LoginDriverModel();
+  bool _isLoading = false;
   DriverModel? driver;
 
-  Future<void> onLogin() async {
+  void _onLogin() async {
     if (!_formKey.currentState!.validate()) return;
     driverLogin.username = _usernameController.text;
     driverLogin.password = _passwordController.text;
-
+    setState(() {
+      _isLoading = true;
+    });
     try {
       driver = await _driverService.login(driverLogin);
       if (driver != null && mounted) {
@@ -36,7 +39,14 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
         );
       }
     } catch (e) {
-      print(e);
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Korisničko ime ili lozinka nisu tačni."))
+        );
+      }
     }
   }
 
@@ -148,7 +158,14 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  ElevatedButton(
+                  _isLoading
+                  ? const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  )
+                  : ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(40),
                       backgroundColor:
@@ -156,7 +173,7 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
                       foregroundColor:
                           Theme.of(context).colorScheme.onTertiaryContainer,
                     ),
-                    onPressed: onLogin,
+                    onPressed: _onLogin,
                     child: const Text("Prijavi se"),
                   ),
                 ],

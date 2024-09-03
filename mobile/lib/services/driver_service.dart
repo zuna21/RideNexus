@@ -31,16 +31,18 @@ class DriverService {
   Future<void> logout() async {
     await _userService.deleteAll();
   }
-
-  Future<List<DriverCardModel>> getAll(double latitude, double longitude, int pageIndex, int pageSize) async {
+// double latitude, double longitude, int pageIndex, int pageSize
+  Future<List<DriverCardModel>> getAll({double? latitude, double? longitude, int? pageIndex, int? pageSize, String? search}) async {
     final queryParams = {
-      "latitude": latitude.toString(),
-      "longitude": latitude.toString(),
-      "pageIndex": pageIndex.toString(),
-      "pageSize": pageSize.toString(),
+      if (latitude != null) "latitude": latitude.toString(),
+      if (longitude != null) "longitude": longitude.toString(),
+      if (pageIndex != null) "pageIndex": pageIndex.toString(),
+      if (pageSize != null) "pageSize": pageSize.toString(),
+      if (search != null) "search" : search
     };
     final token = await _userService.getToken();
     final url = Uri.http(AppConfig.baseUrl, "/api/driver", queryParams);
+    print(url);
     final response = await http.get(
       url,
       headers: <String, String>{

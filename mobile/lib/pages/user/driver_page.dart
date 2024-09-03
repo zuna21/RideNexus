@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/helpers/fetch_status.dart';
 import 'package:mobile/models/driver_model.dart';
 import 'package:mobile/pages/driver/chat_page.dart';
 import 'package:mobile/pages/driver/reviews_page.dart';
+import 'package:mobile/pages/error_page.dart';
 import 'package:mobile/pages/user/review_page.dart';
 import 'package:mobile/services/driver_service.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/rating.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -18,6 +21,7 @@ class DriverPage extends StatefulWidget {
 
 class _DriverPageState extends State<DriverPage> {
   final _driverService = DriverService();
+  FetchStatus _fetchStatus = FetchStatus.loading;
   DriverDetailsModel? _driver;
 
   @override
@@ -30,13 +34,17 @@ class _DriverPageState extends State<DriverPage> {
     DriverDetailsModel? driver;
     try {
       driver = await _driverService.getDetails(widget.driverId);
+      setState(() {
+        _driver = driver;
+        _fetchStatus = FetchStatus.data;
+      });
     } catch (e) {
+      setState(() {
+        _fetchStatus = FetchStatus.error;
+      });
       print(e);
     }
 
-    setState(() {
-      _driver = driver;
-    });
   }
 
   @override
@@ -46,8 +54,18 @@ class _DriverPageState extends State<DriverPage> {
         title: _driver != null ? Text(_driver!.username!) : const Text("Vozač"),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: _driver != null
-          ? SingleChildScrollView(
+      body: _build()
+    );
+  }
+
+  Widget _build() {
+    switch (_fetchStatus) {
+      case FetchStatus.loading:
+        return const Loading();
+      case FetchStatus.error:
+        return const ErrorPage();
+      default:
+        return SingleChildScrollView(
               child: Column(
                 children: [
                   Stack(
@@ -265,10 +283,7 @@ class _DriverPageState extends State<DriverPage> {
                   ),
                 ],
               ),
-            )
-          : const Center(
-              child: Text("Wait to get driver..."),
-            ),
-    );
+            );
+    }
   }
 }
